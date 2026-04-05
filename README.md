@@ -1,2 +1,2 @@
 # Temporary-Portfolio
-made a vibe coded portfolio. this is just to make it live until sure.
+Made a vibe coded portfolio. This is just to make it live Temporarily.
