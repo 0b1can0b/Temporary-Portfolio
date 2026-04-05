@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hetul Darji — Work in Progress</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --bg: #FAFAF8;
+  --surface: #FFFFFF;
+  --ink: #1A1A18;
+  --ink2: #3D3D3A;
+  --ink3: #6B6B66;
+  --ink4: #9C9C96;
+  --accent: #2D5A3D;
+  --accent-light: rgba(45,90,61,0.06);
+  --border: #E2E0DA;
+  --serif: 'Instrument Serif', Georgia, serif;
+  --sans: 'DM Sans', system-ui, sans-serif;
+}
+html { scroll-behavior: smooth; }
+body { font-family: var(--sans); font-size: 16px; line-height: 1.7; color: var(--ink2); background: var(--bg); -webkit-font-smoothing: antialiased; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 24px; }
+::selection { background: rgba(45,90,61,0.12); }
+a { color: var(--accent); text-decoration: none; }
+
+.container { max-width: 560px; width: 100%; }
+
+.header { margin-bottom: 48px; }
+.name {
+  font-family: var(--serif);
+  font-size: 32px;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+.tagline {
+  font-size: 15px;
+  color: var(--ink3);
+  margin-bottom: 16px;
+  line-height: 1.6;
+}
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--ink4);
+  padding: 6px 14px;
+  background: var(--accent-light);
+  border-radius: 20px;
+}
+.status-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: pulse 2s ease infinite;
+}
+@keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+
+.section-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink4);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.links { margin-bottom: 40px; }
+.link-card {
+  display: block;
+  padding: 20px 24px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  margin-bottom: 10px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.link-card:hover {
+  border-color: #ccc;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+  text-decoration: none;
+}
+.link-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+.link-title {
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--ink);
+}
+.link-tag {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 12px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+.tag-public { background: rgba(45,90,61,0.08); color: var(--accent); }
+.tag-private { background: rgba(156,156,150,0.1); color: var(--ink4); }
+.link-desc {
+  font-size: 13px;
+  color: var(--ink3);
+  line-height: 1.6;
+}
+.link-arrow {
+  color: var(--ink4);
+  font-size: 14px;
+}
+
+.note {
+  font-size: 13px;
+  color: var(--ink4);
+  line-height: 1.7;
+  padding: 20px 0;
+  border-top: 1px solid var(--border);
+}
+
+.footer-links {
+  display: flex;
+  gap: 20px;
+  margin-top: 12px;
+  font-size: 14px;
+}
+.footer-links a {
+  color: var(--ink3);
+  transition: color 0.2s;
+}
+.footer-links a:hover { color: var(--ink); }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <div class="name">Hetul Darji</div>
+    <p class="tagline">Frontend WordPress Developer — Figma to Elementor, performance, and SEO. The real portfolio at <strong>hetuldarji.in</strong> is being hand-built. These are working drafts.</p>
+    <div class="status"><span class="status-dot"></span> Portfolio under construction</div>
+  </div>
+
+  <div class="links">
+    <div class="section-label">Pages</div>
+
+    <a href="/temporary-portfolio/" class="link-card">
+      <div class="link-top">
+        <span class="link-title">Portfolio</span>
+        <span class="link-tag tag-public">Public</span>
+      </div>
+      <p class="link-desc">Interim portfolio — work experience, projects, stack, and contact. Shareable with employers and clients.</p>
+    </a>
+
+    <a href="/wp-dashboard/" class="link-card">
+      <div class="link-top">
+        <span class="link-title">WP Project Dashboard</span>
+        <span class="link-tag tag-private">Preview</span>
+      </div>
+      <p class="link-desc">14-phase WordPress project checklist visualized as an interactive dashboard. Read-only version.</p>
+    </a>
+
+    <a href="/wp-dashboard-editable/" class="link-card">
+      <div class="link-top">
+        <span class="link-title">WP Dashboard — Editable</span>
+        <span class="link-tag tag-private">Preview</span>
+      </div>
+      <p class="link-desc">Full editable version with inline editing, version history, add/delete tasks and phases, and HTML export.</p>
+    </a>
+  </div>
+
+  <div class="note">
+    This is a temporary hub. The real site is being built by hand in WordPress with the Studio TailwindUI design, custom ACF integration, and proper performance tuning. These pages exist so I can share my work now while the real thing gets done right.
+  </div>
+
+  <div class="footer-links">
+    <a href="mailto:hi@hetuldarji.in">Email</a>
+    <a href="https://linkedin.com/in/hetul-darji" target="_blank">LinkedIn</a>
+    <a href="https://github.com/0b1can0b" target="_blank">GitHub</a>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WP Project Dashboard — Editable</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --bg: #0a0e14; --bg2: #0d1117; --bg3: #111820; --bg4: #161d27; --bg5: #1a2230;
+  --green: #00e676; --green-dim: rgba(0,230,118,0.08); --green-mid: rgba(0,230,118,0.15);
+  --green-border: rgba(0,230,118,0.12); --cyan: #00bcd4; --amber: #ffc107;
+  --red: #ff5252; --magenta: #e040fb; --text: #b0bec5; --text2: #78909c;
+  --text3: #546e7a; --white: #eceff1;
+  --mono: 'IBM Plex Mono', monospace; --sans: 'Outfit', sans-serif;
+}
+html { scroll-behavior: smooth; }
+body { font-family: var(--mono); font-size: 14px; line-height: 1.7; color: var(--text); background: #060a0f; -webkit-font-smoothing: antialiased; }
+::selection { background: rgba(0,230,118,0.2); color: var(--green); }
+button { font-family: var(--mono); cursor: pointer; border: none; background: none; color: var(--text); }
+
+/* CHROME */
+.chrome { background: var(--bg2); padding: 12px 20px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--green-border); position: sticky; top: 0; z-index: 200; }
+.dots { display: flex; gap: 6px; }
+.dot { width: 12px; height: 12px; border-radius: 50%; }
+.dot-r { background: #ff5f56; } .dot-y { background: #ffbd2e; } .dot-g { background: #27c93f; }
+.chrome-path { margin-left: 16px; color: var(--green); font-size: 13px; opacity: 0.7; }
+.chrome-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+.pulse { width: 7px; height: 7px; border-radius: 50%; background: var(--green); animation: pulse 2s ease infinite; }
+@keyframes pulse { 0%,100%{opacity:.5;transform:scale(1)} 50%{opacity:1;transform:scale(1.3)} }
+.chrome-btn { font-size: 11px; padding: 4px 10px; border: 1px solid var(--green-border); color: var(--text3); text-transform: uppercase; letter-spacing: 1.2px; transition: all .2s; border-radius: 2px; }
+.chrome-btn:hover { border-color: var(--green); color: var(--green); background: var(--green-dim); }
+.chrome-btn.danger:hover { border-color: var(--red); color: var(--red); background: rgba(255,82,82,0.08); }
+
+/* WRAP */
+.wrap { max-width: 1100px; margin: 0 auto; min-height: 100vh; }
+
+/* HEADER */
+.header { padding: 28px 28px 20px; border-bottom: 1px solid var(--green-border); }
+.header-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; }
+.header h1 { font-family: var(--sans); font-size: 22px; font-weight: 700; color: var(--white); }
+.header .subtitle { font-size: 13px; color: var(--text3); }
+.meta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; }
+.meta-item { font-size: 13px; }
+.meta-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 2px; }
+
+/* EDITABLE */
+[contenteditable] { outline: none; border-bottom: 1px solid transparent; transition: all .2s; padding: 1px 4px; margin: -1px -4px; border-radius: 2px; }
+[contenteditable]:hover { border-bottom-color: var(--green-border); }
+[contenteditable]:focus { border-bottom-color: var(--green); background: rgba(0,230,118,0.04); }
+.editable-val { color: var(--cyan); }
+
+/* STACK */
+.stack-bar { padding: 10px 28px; background: var(--bg3); border-bottom: 1px solid var(--green-border); display: flex; gap: 12px; flex-wrap: wrap; font-size: 12px; align-items: center; }
+.stack-item { display: flex; align-items: center; gap: 6px; color: var(--text3); padding: 2px 8px; border: 1px solid transparent; border-radius: 2px; transition: all .2s; }
+.stack-item:hover { border-color: rgba(255,82,82,0.2); }
+.stack-item .remove-stack { display: none; color: var(--red); font-size: 10px; cursor: pointer; margin-left: 2px; }
+.stack-item:hover .remove-stack { display: inline; }
+.stack-dot { width: 5px; height: 5px; border-radius: 1px; background: var(--green); flex-shrink: 0; }
+.add-stack { font-size: 11px; color: var(--text3); padding: 2px 8px; border: 1px dashed var(--green-border); cursor: pointer; border-radius: 2px; }
+.add-stack:hover { border-color: var(--green); color: var(--green); }
+
+/* HEALTH */
+.health { padding: 20px 28px; border-bottom: 1px solid var(--green-border); }
+.health-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 8px; }
+.health-label { font-size: 13px; color: var(--text2); font-family: var(--sans); font-weight: 500; }
+.health-stats { display: flex; gap: 20px; font-size: 12px; color: var(--text3); }
+.health-stats .num { color: var(--green); font-weight: 600; }
+.health-stats .num.amber { color: var(--amber); }
+.progress-track { height: 6px; background: rgba(0,230,118,0.06); border-radius: 3px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--green), var(--cyan)); border-radius: 3px; transition: width 1s cubic-bezier(.22,1,.36,1); position: relative; }
+.progress-fill::after { content:''; position: absolute; right:0; top:-2px; bottom:-2px; width: 12px; background: var(--green); border-radius: 2px; box-shadow: 0 0 12px rgba(0,230,118,0.5); }
+
+/* STATS */
+.stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: var(--green-border); border-bottom: 1px solid var(--green-border); }
+.stat { background: var(--bg); padding: 18px 14px; text-align: center; }
+.stat-num { font-family: var(--sans); font-size: 26px; font-weight: 700; color: var(--green); margin-bottom: 2px; }
+.stat-num.cyan { color: var(--cyan); } .stat-num.amber { color: var(--amber); } .stat-num.red { color: var(--red); }
+.stat-desc { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 1.5px; font-family: var(--sans); }
+
+/* MAIN */
+.main { display: grid; grid-template-columns: 210px 1fr; }
+
+/* SIDEBAR */
+.sidebar { border-right: 1px solid var(--green-border); padding: 12px 0; position: sticky; top: 45px; height: calc(100vh - 45px); overflow-y: auto; }
+.sidebar-title { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: var(--text3); padding: 8px 16px; font-family: var(--sans); font-weight: 600; }
+.phase-nav { list-style: none; }
+.phase-nav li { padding: 7px 16px; font-size: 12px; color: var(--text3); cursor: pointer; border-left: 2px solid transparent; display: flex; align-items: center; gap: 6px; transition: all .15s; }
+.phase-nav li:hover { color: var(--text); background: var(--green-dim); }
+.phase-nav li.active { color: var(--green); border-left-color: var(--green); background: var(--green-dim); }
+.phase-nav li .ph-n { font-size: 10px; width: 18px; flex-shrink: 0; }
+.phase-nav li .ph-c { margin-left: auto; font-size: 10px; }
+.phase-nav li.complete .ph-c { color: var(--green); }
+.add-phase-btn { padding: 8px 16px; font-size: 11px; color: var(--text3); cursor: pointer; display: flex; align-items: center; gap: 6px; border-top: 1px solid var(--green-border); margin-top: 8px; transition: all .2s; }
+.add-phase-btn:hover { color: var(--green); background: var(--green-dim); }
+
+/* CONTENT */
+.content { padding: 0; }
+.phase-section { border-bottom: 1px solid var(--green-border); }
+.phase-header { padding: 16px 20px; display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; transition: background .15s; }
+.phase-header:hover { background: var(--green-dim); }
+.phase-header .arrow { color: var(--text3); font-size: 11px; transition: transform .3s; width: 14px; text-align: center; flex-shrink: 0; }
+.phase-header.open .arrow { transform: rotate(90deg); }
+.phase-header .phase-title { font-family: var(--sans); font-size: 13px; font-weight: 600; color: var(--white); flex: 1; }
+.phase-header .phase-count { font-size: 11px; color: var(--text3); }
+.phase-header .phase-time { font-size: 11px; color: var(--text3); padding: 2px 7px; border: 1px solid rgba(0,230,118,0.08); border-radius: 2px; }
+.phase-header .delete-phase { display: none; font-size: 10px; color: var(--red); padding: 2px 6px; border: 1px solid rgba(255,82,82,0.2); margin-left: 4px; border-radius: 2px; }
+.phase-header:hover .delete-phase { display: inline-block; }
+
+/* TASKS */
+.task-list { display: none; padding: 0 20px 16px; }
+.phase-section.open .task-list { display: block; }
+.task { display: grid; grid-template-columns: 22px 1fr auto auto auto; gap: 6px 10px; align-items: start; padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,0.025); font-size: 13px; }
+.task:last-child { border-bottom: none; }
+.task-check { width: 15px; height: 15px; border: 1.5px solid var(--text3); border-radius: 2px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .2s; margin-top: 3px; }
+.task-check:hover { border-color: var(--green); }
+.task-check.checked { border-color: var(--green); background: rgba(0,230,118,0.15); }
+.task-check.checked::after { content: '✓'; color: var(--green); font-size: 10px; font-weight: 700; }
+.task.done .task-name { color: var(--text3); text-decoration: line-through; opacity: .5; }
+.task-name { color: var(--text); min-width: 0; }
+.task-time { font-size: 12px; color: var(--text3); white-space: nowrap; }
+.task-priority { font-size: 10px; padding: 1px 5px; border-radius: 2px; text-transform: uppercase; letter-spacing: .8px; font-weight: 600; font-family: var(--sans); white-space: nowrap; cursor: pointer; transition: opacity .2s; }
+.task-priority:hover { opacity: .7; }
+.pri-high { background: rgba(255,193,7,0.12); color: var(--amber); }
+.pri-critical { background: rgba(255,82,82,0.12); color: var(--red); }
+.pri-medium { background: rgba(0,188,212,0.12); color: var(--cyan); }
+.pri-low { background: rgba(0,230,118,0.08); color: var(--green); }
+.task-del { font-size: 10px; color: var(--text3); cursor: pointer; opacity: 0; transition: opacity .15s; padding: 2px 4px; }
+.task:hover .task-del { opacity: 1; }
+.task-del:hover { color: var(--red); }
+.task-notes { font-size: 11px; color: var(--text3); grid-column: 2 / -1; margin-top: -4px; font-style: italic; }
+.add-task-row { padding: 8px 0; display: flex; align-items: center; gap: 8px; }
+.add-task-btn { font-size: 11px; color: var(--text3); cursor: pointer; display: flex; align-items: center; gap: 4px; padding: 4px 8px; border: 1px dashed var(--green-border); border-radius: 2px; transition: all .2s; }
+.add-task-btn:hover { color: var(--green); border-color: var(--green); }
+
+/* LOG */
+.log { padding: 14px 28px; background: var(--bg2); border-top: 1px solid var(--green-border); font-size: 11px; color: var(--text3); max-height: 140px; overflow-y: auto; }
+.log-line { display: flex; gap: 10px; padding: 1px 0; }
+.log-time { color: var(--text3); white-space: nowrap; }
+.log-msg { color: var(--text2); } .log-msg .g { color: var(--green); } .log-msg .r { color: var(--red); } .log-msg .a { color: var(--amber); }
+
+/* VERSION PANEL */
+.version-panel { display: none; position: fixed; top: 0; right: 0; width: 380px; height: 100vh; background: var(--bg2); border-left: 1px solid var(--green-border); z-index: 300; overflow-y: auto; }
+.version-panel.open { display: block; }
+.vp-header { padding: 16px 20px; border-bottom: 1px solid var(--green-border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: var(--bg2); z-index: 1; }
+.vp-header h3 { font-family: var(--sans); font-size: 14px; color: var(--white); font-weight: 600; }
+.vp-close { font-size: 18px; color: var(--text3); cursor: pointer; padding: 4px 8px; } .vp-close:hover { color: var(--white); }
+.vp-list { padding: 12px 20px; }
+.vp-item { padding: 12px; border: 1px solid var(--green-border); margin-bottom: 8px; border-radius: 2px; }
+.vp-item:hover { border-color: rgba(0,230,118,0.3); }
+.vp-meta { display: flex; justify-content: space-between; font-size: 11px; color: var(--text3); margin-bottom: 6px; }
+.vp-label { font-size: 13px; color: var(--text); margin-bottom: 6px; }
+.vp-stats { font-size: 11px; color: var(--text3); }
+.vp-actions { display: flex; gap: 8px; margin-top: 8px; }
+.vp-btn { font-size: 10px; padding: 3px 8px; border: 1px solid var(--green-border); color: var(--text3); text-transform: uppercase; letter-spacing: 1px; border-radius: 2px; cursor: pointer; transition: all .2s; }
+.vp-btn:hover { border-color: var(--green); color: var(--green); }
+.vp-btn.restore:hover { border-color: var(--amber); color: var(--amber); }
+.vp-btn.del:hover { border-color: var(--red); color: var(--red); }
+.vp-empty { color: var(--text3); font-size: 12px; padding: 20px 0; text-align: center; }
+.vp-save { padding: 16px 20px; border-bottom: 1px solid var(--green-border); }
+.vp-save-row { display: flex; gap: 8px; }
+.vp-input { flex: 1; background: var(--bg); border: 1px solid var(--green-border); color: var(--text); padding: 6px 10px; font-family: var(--mono); font-size: 12px; border-radius: 2px; outline: none; }
+.vp-input:focus { border-color: var(--green); }
+.vp-input::placeholder { color: var(--text3); }
+.vp-save-btn { font-size: 11px; padding: 6px 12px; border: 1px solid var(--green); color: var(--green); background: var(--green-dim); text-transform: uppercase; letter-spacing: 1px; cursor: pointer; border-radius: 2px; font-family: var(--mono); }
+.vp-save-btn:hover { background: var(--green-mid); }
+
+/* OVERLAY */
+.overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 250; }
+.overlay.open { display: block; }
+
+/* FOOTER */
+.footer { padding: 14px 28px; text-align: center; font-size: 11px; color: var(--text3); border-top: 1px solid var(--green-border); letter-spacing: 1px; }
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .main { grid-template-columns: 1fr; }
+  .sidebar { position: relative; height: auto; top: 0; border-right: none; border-bottom: 1px solid var(--green-border); padding: 8px 0; display: flex; overflow-x: auto; }
+  .sidebar-title { display: none; }
+  .phase-nav { display: flex; white-space: nowrap; }
+  .phase-nav li { padding: 6px 12px; border-left: none; border-bottom: 2px solid transparent; font-size: 11px; }
+  .phase-nav li.active { border-bottom-color: var(--green); border-left: none; }
+  .phase-nav li .ph-c { display: none; }
+  .add-phase-btn { border-top: none; border-left: 1px solid var(--green-border); margin-top: 0; padding: 6px 12px; white-space: nowrap; }
+  .stats { grid-template-columns: repeat(2,1fr); }
+  .header { padding: 16px; }
+  .health { padding: 16px; }
+  .task { grid-template-columns: 22px 1fr auto auto; }
+  .task-del { opacity: 1; }
+  .version-panel { width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<div class="chrome">
+  <div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+  <span class="chrome-path">hetul@dev:~/projects$ launch_dashboard.sh</span>
+  <div class="chrome-right">
+    <button class="chrome-btn" onclick="exportHTML()" title="Download as standalone HTML">↓ Export</button>
+    <button class="chrome-btn" onclick="toggleVersions()" title="Version history">⌥ Versions</button>
+    <button class="chrome-btn danger" onclick="resetAll()" title="Reset to defaults">Reset</button>
+    <div class="pulse"></div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="header">
+    <div class="header-row">
+      <div>
+        <h1 contenteditable="true" id="projTitle">WordPress Project Checklist</h1>
+        <div class="subtitle" contenteditable="true" id="projSubtitle">14-Phase Build System · Solo Dev · Hetul Darji</div>
+      </div>
+    </div>
+    <div class="meta-grid">
+      <div class="meta-item"><div class="meta-label">Client</div><div contenteditable="true" class="editable-val" id="metaClient">—</div></div>
+      <div class="meta-item"><div class="meta-label">Project Start</div><div contenteditable="true" class="editable-val" id="metaStart">—</div></div>
+      <div class="meta-item"><div class="meta-label">Target Launch</div><div contenteditable="true" class="editable-val" id="metaTarget">—</div></div>
+      <div class="meta-item"><div class="meta-label">Scope</div><div contenteditable="true" class="editable-val" id="metaScope">New Build · Figma to Elementor</div></div>
+    </div>
+  </div>
+
+  <div class="stack-bar" id="stackBar"></div>
+
+  <div class="health">
+    <div class="health-top">
+      <span class="health-label">Project Health</span>
+      <div class="health-stats">
+        <span>Tasks: <span class="num" id="sDone">0</span>/<span id="sTotal">0</span></span>
+        <span>Remaining: <span class="num amber" id="sRemain">—</span></span>
+        <span><span class="num" id="sPct">0%</span></span>
+      </div>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progBar" style="width:0%"></div></div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-num" id="xPhases">14</div><div class="stat-desc">Phases</div></div>
+    <div class="stat"><div class="stat-num cyan" id="xTasks">0</div><div class="stat-desc">Tasks</div></div>
+    <div class="stat"><div class="stat-num amber" id="xHours">0</div><div class="stat-desc">Est. Hours</div></div>
+    <div class="stat"><div class="stat-num red" id="xDays" contenteditable="true">10–14</div><div class="stat-desc">Working Days</div></div>
+  </div>
+
+  <div class="main">
+    <div class="sidebar">
+      <div class="sidebar-title">Phases</div>
+      <ul class="phase-nav" id="phaseNav"></ul>
+      <div class="add-phase-btn" onclick="addPhase()">+ Add Phase</div>
+    </div>
+    <div class="content" id="content"></div>
+  </div>
+
+  <div class="log" id="log">
+    <div class="log-line"><span class="log-time">[system]</span><span class="log-msg">> Dashboard loaded. <span class="g">All systems ready.</span> Click any text to edit.</span></div>
+  </div>
+
+  <div class="footer">HETUL DARJI · FRONTEND WORDPRESS DEVELOPER · FIGMA → ELEMENTOR · PERFORMANCE & SEO</div>
+</div>
+
+<!-- VERSION PANEL -->
+<div class="overlay" id="overlay" onclick="toggleVersions()"></div>
+<div class="version-panel" id="versionPanel">
+  <div class="vp-header"><h3>Version History</h3><span class="vp-close" onclick="toggleVersions()">×</span></div>
+  <div class="vp-save">
+    <div class="vp-save-row">
+      <input class="vp-input" id="versionLabel" placeholder="Version label (e.g. v1.0 initial)">
+      <button class="vp-save-btn" onclick="saveVersion()">Save</button>
+    </div>
+  </div>
+  <div class="vp-list" id="versionList"></div>
+</div>
+
+<script>
+// ── DEFAULT DATA ──
+const DEFAULT_STACK = ["Hello Theme","Elementor Pro","ACF Pro","FlyingPress","Fluent Forms","UpdraftPlus","RankMath","WPCode","Wordfence"];
+
+const DEFAULT_PHASES = [
+  { name:"Hosting, Domain & Server Setup", tasks:[
+    {n:"Purchase domain for client",no:"Confirm preferred registrar",t:"15 min",p:"high",d:false},
+    {n:"Purchase / provision hosting",no:"Cloudways, RunCloud, SiteGround etc.",t:"20 min",p:"high",d:false},
+    {n:"Point domain DNS to host",no:"Confirm propagation — up to 24 hrs",t:"10 min",p:"high",d:false},
+    {n:"SSL certificate — install & force HTTPS",no:"Auto via host or Let's Encrypt",t:"15 min",p:"critical",d:false},
+    {n:"www → non-www redirect",no:"Set in .htaccess + WP Settings",t:"10 min",p:"medium",d:false},
+    {n:"Enable Coming Soon page",no:"Professional holding page",t:"10 min",p:"medium",d:false},
+    {n:"Create staging environment",no:"Build on staging, push to live",t:"30 min",p:"high",d:false},
+    {n:"Set up daily backup",no:"UpdraftPlus → Google Drive",t:"20 min",p:"critical",d:false},
+  ]},
+  { name:"WordPress Installation & Config", tasks:[
+    {n:"Install WordPress",no:"Delete default content",t:"10 min",p:"high",d:false},
+    {n:"Set permalink structure",no:"/%postname%/ — before CPT registration",t:"5 min",p:"critical",d:false},
+    {n:"Configure WP Settings",no:"Title, tagline, timezone, email",t:"10 min",p:"medium",d:false},
+    {n:"Delete default plugins",no:"Hello Dolly, Akismet trial",t:"5 min",p:"low",d:false},
+    {n:"Delete default themes",no:"Keep one fallback",t:"5 min",p:"low",d:false},
+    {n:"Install Hello theme",no:"Minimal base for Elementor",t:"5 min",p:"high",d:false},
+    {n:"Install Elementor Pro",no:"License key, connect",t:"10 min",p:"high",d:false},
+    {n:"Set WP_DEBUG = false",no:"Critical for production",t:"5 min",p:"critical",d:false},
+    {n:"Add AUTH_KEYS / SALTS",no:"Generate at wordpress.org/secret-key",t:"10 min",p:"high",d:false},
+    {n:"Set post revisions limit",no:"define('WP_POST_REVISIONS', 5)",t:"5 min",p:"low",d:false},
+  ]},
+  { name:"Security Hardening", tasks:[
+    {n:"Change wp-login.php URL",no:"WPS Hide Login",t:"10 min",p:"high",d:false},
+    {n:"Limit login attempts",no:"Limit Login Attempts Reloaded",t:"10 min",p:"high",d:false},
+    {n:"Disable file editing",no:"DISALLOW_FILE_EDIT = true",t:"5 min",p:"critical",d:false},
+    {n:"Disable XML-RPC",no:".htaccess or functions.php",t:"10 min",p:"high",d:false},
+    {n:"Hide WP version number",no:"Remove from header & feeds",t:"10 min",p:"medium",d:false},
+    {n:"Protect wp-admin directory",no:"IP whitelist or basic auth",t:"15 min",p:"medium",d:false},
+    {n:"Set correct file permissions",no:"644 / 755 / wp-config 600",t:"10 min",p:"critical",d:false},
+  ]},
+  { name:"Plugin Installation & Config", tasks:[
+    {n:"ACF Pro — install & activate",no:"License key; configure after CPT",t:"10 min",p:"high",d:false},
+    {n:"FlyingPress — configure",no:"Cache, CSS/JS optimisation",t:"20 min",p:"high",d:false},
+    {n:"DB cleanup tools",no:"Post revisions, auto-drafts, transients",t:"10 min",p:"medium",d:false},
+    {n:"RankMath — run wizard",no:"Full setup",t:"20 min",p:"high",d:false},
+    {n:"Fluent Forms — install",no:"Submissions + DB storage",t:"15 min",p:"high",d:false},
+    {n:"UpdraftPlus — configure",no:"Daily backup to Google Drive",t:"20 min",p:"critical",d:false},
+    {n:"WPS Hide Login",no:"Custom login URL",t:"5 min",p:"medium",d:false},
+    {n:"GDPR / Cookie consent",no:"Cookiebot or Complianz if needed",t:"20 min",p:"medium",d:false},
+  ]},
+  { name:"ACF & Custom Post Types", tasks:[
+    {n:"Register CPT: Services",no:"Slug, labels, supports, rewrite",t:"20 min",p:"high",d:false},
+    {n:"Register CPT: Projects",no:"Slug, labels, supports, rewrite",t:"20 min",p:"high",d:false},
+    {n:"Configure Blog (Posts)",no:"Categories/tags setup",t:"10 min",p:"medium",d:false},
+    {n:"Create ACF field groups",no:"Only fields used in design",t:"30 min",p:"critical",d:false},
+    {n:"ACF Options Page",no:"Header/footer/global content",t:"20 min",p:"high",d:false},
+    {n:"Test CPT & ACF fields",no:"Enter dummy data",t:"15 min",p:"high",d:false},
+    {n:"Flush rewrite rules",no:"Permalinks → Save",t:"2 min",p:"critical",d:false},
+  ]},
+  { name:"Global Elements (Header/Footer)", tasks:[
+    {n:"Build Header",no:"Sticky, logo SVG, nav links",t:"2.5 hr",p:"critical",d:false},
+    {n:"Build Mobile Off-Canvas Menu",no:"Test all breakpoints",t:"1.5 hr",p:"critical",d:false},
+    {n:"Build Before Footer",no:"CTA strip / newsletter",t:"1 hr",p:"medium",d:false},
+    {n:"Build Footer",no:"Links, social, copyright, legal",t:"1.5 hr",p:"high",d:false},
+    {n:"Assign header/footer sitewide",no:"Display conditions",t:"10 min",p:"high",d:false},
+    {n:"Upload Favicon",no:"512×512 PNG",t:"5 min",p:"medium",d:false},
+    {n:"Upload Site Logo SVG",no:"SVG sanitisation enabled",t:"5 min",p:"high",d:false},
+  ]},
+  { name:"Page Build — Figma → Elementor", tasks:[
+    {n:"Export images from Figma",no:"Correct sizes; logos as SVG",t:"30 min",p:"high",d:false},
+    {n:"Convert images to WebP",no:"Keep originals",t:"20 min",p:"high",d:false},
+    {n:"Self-host fonts (WOFF2)",no:"No Google Fonts CDN",t:"20 min",p:"high",d:false},
+    {n:"Set global colours & typography",no:"Match Figma before building",t:"30 min",p:"critical",d:false},
+    {n:"Home Page (8 sections)",no:"Hero, services, about teaser",t:"6 hr",p:"critical",d:false},
+    {n:"About Page (8 sections)",no:"Team, story, values",t:"5 hr",p:"high",d:false},
+    {n:"Contact Page (4 sections)",no:"Map, form, address, CTA",t:"2.5 hr",p:"high",d:false},
+    {n:"Services Listing Page",no:"CPT archive or static",t:"2.5 hr",p:"high",d:false},
+    {n:"Projects Listing Page",no:"Grid or masonry",t:"2.5 hr",p:"high",d:false},
+    {n:"Blog Listing Page",no:"Archive with pagination",t:"2.5 hr",p:"medium",d:false},
+    {n:"Services Inner Template",no:"ACF driven single CPT",t:"3.5 hr",p:"high",d:false},
+    {n:"Projects Inner Template",no:"ACF driven single CPT",t:"3.5 hr",p:"high",d:false},
+    {n:"Blog Inner Template",no:"Author, date, related",t:"3.5 hr",p:"medium",d:false},
+    {n:"404 Page",no:"On-brand, link to Home",t:"45 min",p:"medium",d:false},
+    {n:"Search Results Page",no:"Custom template",t:"45 min",p:"medium",d:false},
+    {n:"Archive / Taxonomy Pages",no:"Category, tag archives",t:"1 hr",p:"medium",d:false},
+    {n:"Breadcrumb Banner",no:"Dynamic title inner hero",t:"1 hr",p:"high",d:false},
+    {n:"Privacy & Terms Pages",no:"Styled to match site",t:"1 hr",p:"low",d:false},
+  ]},
+  { name:"Forms, SMTP & Email", tasks:[
+    {n:"Build contact form",no:"Honeypot spam protection",t:"30 min",p:"high",d:false},
+    {n:"Configure DB storage",no:"Entries tab",t:"10 min",p:"medium",d:false},
+    {n:"Set up SMTP",no:"SendGrid / Brevo free tier",t:"30 min",p:"critical",d:false},
+    {n:"Send test email",no:"",t:"5 min",p:"high",d:false},
+    {n:"Check mail-tester.com",no:"Aim 9+/10",t:"15 min",p:"high",d:false},
+    {n:"Verify SPF / DKIM",no:"SMTP provider instructions",t:"20 min",p:"critical",d:false},
+  ]},
+  { name:"Performance Optimisation", tasks:[
+    {n:"Enable page cache",no:"FlyingPress",t:"10 min",p:"high",d:false},
+    {n:"Minify & combine CSS/JS",no:"Test for visual breaks",t:"20 min",p:"high",d:false},
+    {n:"Remove unused CSS",no:"Test carefully per-page",t:"20 min",p:"critical",d:false},
+    {n:"Enable lazy loading",no:"Images & iframes",t:"10 min",p:"high",d:false},
+    {n:"Preload critical assets",no:"Fonts, hero image",t:"15 min",p:"high",d:false},
+    {n:"Database cleanup",no:"Revisions, spam, transients",t:"10 min",p:"medium",d:false},
+    {n:"Verify WebP & compression",no:"DevTools Network tab",t:"20 min",p:"high",d:false},
+    {n:"Verify self-hosted fonts",no:"No external requests",t:"10 min",p:"medium",d:false},
+    {n:"Run PageSpeed Insights",no:"Target 90+ both",t:"20 min",p:"critical",d:false},
+    {n:"Run WebPageTest",no:"TTFB, LCP, CLS",t:"15 min",p:"high",d:false},
+  ]},
+  { name:"SEO", tasks:[
+    {n:"SEO plugin wizard complete",no:"Site type, social, knowledge graph",t:"20 min",p:"high",d:false},
+    {n:"XML Sitemap verified",no:"Submit to GSC",t:"10 min",p:"critical",d:false},
+    {n:"robots.txt reviewed",no:"No important pages blocked",t:"10 min",p:"high",d:false},
+    {n:"Canonical tags verified",no:"All pages",t:"10 min",p:"high",d:false},
+    {n:"Schema: Organisation",no:"JSON-LD",t:"20 min",p:"high",d:false},
+    {n:"Schema: BreadcrumbList",no:"Inner pages",t:"15 min",p:"medium",d:false},
+    {n:"Schema: Article",no:"Blog posts",t:"15 min",p:"medium",d:false},
+    {n:"Open Graph meta tags",no:"Per page",t:"20 min",p:"high",d:false},
+    {n:"Twitter Card meta tags",no:"summary_large_image",t:"10 min",p:"medium",d:false},
+    {n:"Google Search Console",no:"Verify & submit sitemap",t:"20 min",p:"critical",d:false},
+    {n:"GSC — request indexing",no:"Key pages",t:"10 min",p:"high",d:false},
+    {n:"Google Analytics 4",no:"GA4 site tag or SEO plugin",t:"20 min",p:"high",d:false},
+    {n:"Title tags — unique",no:"Primary keyword near front",t:"20 min",p:"critical",d:false},
+    {n:"Meta descriptions",no:"150-160 chars with CTA",t:"20 min",p:"high",d:false},
+    {n:"H1 on every page",no:"One only — verify",t:"10 min",p:"high",d:false},
+    {n:"Image alt text",no:"Decorative = empty alt",t:"15 min",p:"medium",d:false},
+  ]},
+  { name:"Legal & Compliance", tasks:[
+    {n:"Privacy Policy page",no:"Linked in footer",t:"30 min",p:"high",d:false},
+    {n:"Terms & Conditions",no:"Linked in footer",t:"20 min",p:"high",d:false},
+    {n:"Cookie consent banner",no:"Block before consent",t:"30 min",p:"high",d:false},
+    {n:"Form Privacy checkbox",no:"If collecting data",t:"10 min",p:"medium",d:false},
+    {n:"Data retention policy",no:"Agreed with client",t:"10 min",p:"medium",d:false},
+  ]},
+  { name:"QA & Testing", tasks:[
+    {n:"Chrome walkthrough",no:"",t:"30 min",p:"high",d:false},
+    {n:"Firefox walkthrough",no:"",t:"20 min",p:"high",d:false},
+    {n:"Safari walkthrough",no:"Safari is the new IE",t:"30 min",p:"critical",d:false},
+    {n:"Desktop 1440/1920px",no:"",t:"20 min",p:"high",d:false},
+    {n:"Tablet 768/1024px",no:"",t:"20 min",p:"high",d:false},
+    {n:"Mobile real device",no:"iOS Safari + Android Chrome",t:"30 min",p:"critical",d:false},
+    {n:"All nav links working",no:"",t:"15 min",p:"high",d:false},
+    {n:"Form submit & receive",no:"Check email AND DB",t:"10 min",p:"critical",d:false},
+    {n:"CPT inner pages render",no:"2-3 real entries each",t:"20 min",p:"high",d:false},
+    {n:"Pagination working",no:"",t:"10 min",p:"medium",d:false},
+    {n:"Search results working",no:"",t:"10 min",p:"medium",d:false},
+    {n:"404 page working",no:"",t:"5 min",p:"medium",d:false},
+    {n:"HTTPS — no mixed content",no:"Console check every page",t:"15 min",p:"critical",d:false},
+  ]},
+  { name:"Pre-Launch & Go Live", tasks:[
+    {n:"Full backup before launch",no:"Manual UpdraftPlus",t:"10 min",p:"critical",d:false},
+    {n:"WP_DEBUG = false",no:"",t:"2 min",p:"critical",d:false},
+    {n:"Maintenance mode OFF",no:"",t:"2 min",p:"high",d:false},
+    {n:"All placeholders replaced",no:"Lorem ipsum hunt",t:"20 min",p:"critical",d:false},
+    {n:"Client content is final",no:"",t:"10 min",p:"high",d:false},
+    {n:"Search visibility ON",no:"Uncheck discourage",t:"2 min",p:"critical",d:false},
+    {n:"GSC final index request",no:"",t:"10 min",p:"high",d:false},
+    {n:"UptimeRobot set up",no:"5-min interval",t:"10 min",p:"medium",d:false},
+    {n:"Final PageSpeed screenshot",no:"Share with client",t:"10 min",p:"high",d:false},
+    {n:"DNS propagation confirmed",no:"dnschecker.org",t:"5 min",p:"high",d:false},
+  ]},
+  { name:"Client Handover", tasks:[
+    {n:"WP Admin cleaned up",no:"Hide irrelevant menus",t:"20 min",p:"medium",d:false},
+    {n:"Strong admin password",no:"Password manager",t:"5 min",p:"critical",d:false},
+    {n:"Handover document delivered",no:"Credentials, hosting, plugins, renewals",t:"45 min",p:"critical",d:false},
+    {n:"Brief client on ACF",no:"Screencast or written",t:"30 min",p:"high",d:false},
+    {n:"Brief on adding posts/CPT",no:"",t:"20 min",p:"high",d:false},
+    {n:"Explain backup system",no:"What, when, where",t:"10 min",p:"medium",d:false},
+    {n:"Revision policy communicated",no:"How many, what counts",t:"10 min",p:"high",d:false},
+    {n:"Support period agreed",no:"30/60/90 days scope",t:"10 min",p:"high",d:false},
+  ]},
+];
+
+// ── STATE ──
+let state = { phases: [], stack: [], meta: {}, title: '', subtitle: '' };
+const STORAGE_KEY = 'wp_dash_v2';
+const VERSION_KEY = 'wp_dash_versions';
+const PRIORITIES = ['critical','high','medium','low'];
+
+function deepClone(o) { return JSON.parse(JSON.stringify(o)); }
+
+function loadState() {
+  try {
+    const s = localStorage.getItem(STORAGE_KEY);
+    if (s) { state = JSON.parse(s); return; }
+  } catch(e) {}
+  resetToDefaults(true);
+}
+
+function resetToDefaults(silent) {
+  state.phases = deepClone(DEFAULT_PHASES);
+  state.stack = [...DEFAULT_STACK];
+  state.meta = { client:'—', start:'—', target:'—', scope:'New Build · Figma to Elementor' };
+  state.title = 'WordPress Project Checklist';
+  state.subtitle = '14-Phase Build System · Solo Dev · Hetul Darji';
+  if (!silent) { save(); render(); log('> <span class="r">Reset to defaults.</span>'); }
+}
+
+function save() {
+  state.title = el('projTitle').textContent;
+  state.subtitle = el('projSubtitle').textContent;
+  state.meta.client = el('metaClient').textContent;
+  state.meta.start = el('metaStart').textContent;
+  state.meta.target = el('metaTarget').textContent;
+  state.meta.scope = el('metaScope').textContent;
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+}
+
+function el(id) { return document.getElementById(id); }
+
+function parseTime(s) {
+  if (!s) return 0;
+  const h = s.match(/([\d.]+)\s*hr/), m = s.match(/([\d.]+)\s*min/);
+  return (h ? parseFloat(h[1])*60 : 0) + (m ? parseFloat(m[1]) : 0);
+}
+
+function stats() {
+  let total=0, done=0, totalM=0, doneM=0;
+  state.phases.forEach(p => p.tasks.forEach(t => {
+    total++; const m = parseTime(t.t); totalM += m;
+    if (t.d) { done++; doneM += m; }
+  }));
+  return { total, done, totalM, remainM: totalM-doneM, pct: total ? Math.round(done/total*100) : 0 };
+}
+
+function updateStats() {
+  const s = stats();
+  el('sDone').textContent = s.done;
+  el('sTotal').textContent = s.total;
+  el('sPct').textContent = s.pct+'%';
+  el('sRemain').textContent = Math.round(s.remainM/60)+'h';
+  el('progBar').style.width = s.pct+'%';
+  el('xPhases').textContent = state.phases.length;
+  el('xTasks').textContent = s.total;
+  el('xHours').textContent = Math.round(s.totalM/60);
+}
+
+function log(msg) {
+  const l = el('log'), t = new Date().toTimeString().slice(0,8);
+  const d = document.createElement('div');
+  d.className = 'log-line';
+  d.innerHTML = `<span class="log-time">[${t}]</span><span class="log-msg">${msg}</span>`;
+  l.appendChild(d); l.scrollTop = l.scrollHeight;
+}
+
+function priClass(p) { return p==='critical'?'pri-critical':p==='high'?'pri-high':p==='medium'?'pri-medium':'pri-low'; }
+
+function cyclePriority(pi, ti) {
+  const cur = state.phases[pi].tasks[ti].p;
+  const idx = PRIORITIES.indexOf(cur);
+  state.phases[pi].tasks[ti].p = PRIORITIES[(idx+1) % PRIORITIES.length];
+  save(); render();
+}
+
+// ── RENDER ──
+function render() {
+  el('projTitle').textContent = state.title;
+  el('projSubtitle').textContent = state.subtitle;
+  el('metaClient').textContent = state.meta.client;
+  el('metaStart').textContent = state.meta.start;
+  el('metaTarget').textContent = state.meta.target;
+  el('metaScope').textContent = state.meta.scope;
+  renderStack();
+  renderSidebar();
+  renderContent();
+  updateStats();
+}
+
+function renderStack() {
+  const bar = el('stackBar');
+  bar.innerHTML = state.stack.map((s,i) =>
+    `<div class="stack-item"><div class="stack-dot"></div>${s}<span class="remove-stack" onclick="removeStack(${i})">✕</span></div>`
+  ).join('') + `<div class="add-stack" onclick="addStack()">+ add</div>`;
+}
+
+function renderSidebar() {
+  const nav = el('phaseNav');
+  nav.innerHTML = '';
+  state.phases.forEach((p, i) => {
+    const d = p.tasks.filter(t=>t.d).length;
+    const li = document.createElement('li');
+    li.dataset.phase = i;
+    li.innerHTML = `<span class="ph-n">${String(i+1).padStart(2,'0')}</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.name}</span><span class="ph-c">${d}/${p.tasks.length}</span>`;
+    if (d === p.tasks.length && p.tasks.length > 0) li.classList.add('complete');
+    li.onclick = () => {
+      document.querySelectorAll('.phase-nav li').forEach(l=>l.classList.remove('active'));
+      li.classList.add('active');
+      const sec = document.querySelector(`[data-s="${i}"]`);
+      if (sec) { sec.classList.add('open'); sec.querySelector('.phase-header').classList.add('open'); sec.scrollIntoView({behavior:'smooth',block:'start'}); }
+    };
+    nav.appendChild(li);
+  });
+}
+
+function renderContent() {
+  const c = el('content');
+  const openPhases = new Set();
+  c.querySelectorAll('.phase-section.open').forEach(s => openPhases.add(s.dataset.s));
+  c.innerHTML = '';
+
+  state.phases.forEach((p, pi) => {
+    const sec = document.createElement('div');
+    sec.className = 'phase-section' + (openPhases.has(String(pi)) ? ' open' : '');
+    sec.dataset.s = pi;
+
+    const tM = p.tasks.reduce((a,t)=>a+parseTime(t.t),0);
+    const tS = tM >= 60 ? `~${(tM/60).toFixed(1)}h` : `${tM}m`;
+    const d = p.tasks.filter(t=>t.d).length;
+
+    const hdr = document.createElement('div');
+    hdr.className = 'phase-header' + (openPhases.has(String(pi)) ? ' open' : '');
+    hdr.innerHTML = `<span class="arrow">▶</span>
+      <span class="phase-title" contenteditable="true" data-pi="${pi}">${p.name}</span>
+      <span class="phase-count">${d}/${p.tasks.length}</span>
+      <span class="phase-time">${tS}</span>
+      <button class="delete-phase" onclick="event.stopPropagation();deletePhase(${pi})">✕ del</button>`;
+    hdr.addEventListener('click', (e) => {
+      if (e.target.contentEditable === 'true') return;
+      sec.classList.toggle('open'); hdr.classList.toggle('open');
+    });
+    // Save phase name on blur
+    const titleEl = hdr.querySelector('.phase-title');
+    titleEl.addEventListener('blur', () => { state.phases[pi].name = titleEl.textContent; save(); renderSidebar(); });
+
+    const tl = document.createElement('div');
+    tl.className = 'task-list';
+
+    p.tasks.forEach((t, ti) => {
+      const row = document.createElement('div');
+      row.className = 'task' + (t.d ? ' done' : '');
+      row.innerHTML = `
+        <div class="task-check ${t.d?'checked':''}" data-pi="${pi}" data-ti="${ti}"></div>
+        <span class="task-name" contenteditable="true" data-pi="${pi}" data-ti="${ti}" data-f="n">${t.n}</span>
+        <span class="task-time" contenteditable="true" data-pi="${pi}" data-ti="${ti}" data-f="t">${t.t}</span>
+        <span class="task-priority ${priClass(t.p)}" onclick="cyclePriority(${pi},${ti})" title="Click to cycle">${t.p}</span>
+        <span class="task-del" onclick="deleteTask(${pi},${ti})" title="Delete task">✕</span>
+        ${t.no ? `<span class="task-notes" contenteditable="true" data-pi="${pi}" data-ti="${ti}" data-f="no">${t.no}</span>` : `<span class="task-notes" contenteditable="true" data-pi="${pi}" data-ti="${ti}" data-f="no" style="opacity:.3">+ add note</span>`}`;
+
+      // Check toggle
+      row.querySelector('.task-check').addEventListener('click', () => {
+        t.d = !t.d;
+        save(); render();
+        if (t.d) log(`> Completed: <span class="g">${t.n}</span>`);
+      });
+
+      // Inline edit save
+      row.querySelectorAll('[contenteditable]').forEach(e => {
+        e.addEventListener('focus', function() { if (this.style.opacity === '0.3') { this.textContent = ''; this.style.opacity = '1'; } });
+        e.addEventListener('blur', function() {
+          const f = this.dataset.f;
+          state.phases[this.dataset.pi].tasks[this.dataset.ti][f] = this.textContent;
+          if (f === 'no' && !this.textContent) { this.textContent = '+ add note'; this.style.opacity = '0.3'; }
+          save(); updateStats();
+        });
+      });
+
+      tl.appendChild(row);
+    });
+
+    // Add task button
+    const addRow = document.createElement('div');
+    addRow.className = 'add-task-row';
+    addRow.innerHTML = `<div class="add-task-btn" onclick="addTask(${pi})">+ Add Task</div>`;
+    tl.appendChild(addRow);
+
+    sec.appendChild(hdr);
+    sec.appendChild(tl);
+    c.appendChild(sec);
+  });
+
+  // Open first if nothing open
+  if (openPhases.size === 0 && c.firstChild) {
+    c.firstChild.classList.add('open');
+    c.firstChild.querySelector('.phase-header').classList.add('open');
+  }
+}
+
+// ── ACTIONS ──
+function addTask(pi) {
+  state.phases[pi].tasks.push({ n:'New task', no:'', t:'15 min', p:'medium', d:false });
+  save(); render();
+  log(`> Task added to <span class="g">Phase ${pi+1}</span>`);
+  // Open and scroll
+  const sec = document.querySelector(`[data-s="${pi}"]`);
+  if (sec) { sec.classList.add('open'); sec.querySelector('.phase-header').classList.add('open'); }
+}
+
+function deleteTask(pi, ti) {
+  const name = state.phases[pi].tasks[ti].n;
+  state.phases[pi].tasks.splice(ti, 1);
+  save(); render();
+  log(`> Deleted: <span class="r">${name}</span>`);
+}
+
+function addPhase() {
+  state.phases.push({ name:'New Phase', tasks:[] });
+  save(); render();
+  log(`> <span class="g">New phase added</span>`);
+}
+
+function deletePhase(pi) {
+  if (!confirm(`Delete Phase ${pi+1}: ${state.phases[pi].name}?`)) return;
+  const name = state.phases[pi].name;
+  state.phases.splice(pi, 1);
+  save(); render();
+  log(`> Phase deleted: <span class="r">${name}</span>`);
+}
+
+function addStack() {
+  const name = prompt('Add stack item:');
+  if (name && name.trim()) { state.stack.push(name.trim()); save(); renderStack(); }
+}
+
+function removeStack(i) {
+  state.stack.splice(i, 1);
+  save(); renderStack();
+}
+
+function resetAll() {
+  if (!confirm('Reset everything to defaults? This cannot be undone.')) return;
+  resetToDefaults(false);
+}
+
+// ── VERSIONS ──
+function getVersions() {
+  try { return JSON.parse(localStorage.getItem(VERSION_KEY) || '[]'); } catch(e) { return []; }
+}
+function saveVersions(v) {
+  try { localStorage.setItem(VERSION_KEY, JSON.stringify(v)); } catch(e) {}
+}
+
+function toggleVersions() {
+  const p = el('versionPanel'), o = el('overlay');
+  p.classList.toggle('open'); o.classList.toggle('open');
+  if (p.classList.contains('open')) renderVersions();
+}
+
+function saveVersion() {
+  const label = el('versionLabel').value.trim() || `v${getVersions().length + 1}`;
+  save(); // ensure latest state
+  const s = stats();
+  const v = { label, date: new Date().toISOString(), state: deepClone(state), stats: { done: s.done, total: s.total, pct: s.pct } };
+  const versions = getVersions();
+  versions.unshift(v);
+  if (versions.length > 30) versions.length = 30;
+  saveVersions(versions);
+  el('versionLabel').value = '';
+  renderVersions();
+  log(`> Version saved: <span class="g">${label}</span>`);
+}
+
+function restoreVersion(i) {
+  if (!confirm('Restore this version? Current state will be overwritten.')) return;
+  const versions = getVersions();
+  state = deepClone(versions[i].state);
+  save(); render();
+  log(`> Restored: <span class="a">${versions[i].label}</span>`);
+}
+
+function deleteVersion(i) {
+  const versions = getVersions();
+  versions.splice(i, 1);
+  saveVersions(versions);
+  renderVersions();
+}
+
+function renderVersions() {
+  const list = el('versionList');
+  const versions = getVersions();
+  if (!versions.length) { list.innerHTML = '<div class="vp-empty">No versions saved yet</div>'; return; }
+  list.innerHTML = versions.map((v, i) => {
+    const d = new Date(v.date);
+    const dateStr = d.toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' });
+    const timeStr = d.toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit' });
+    return `<div class="vp-item">
+      <div class="vp-meta"><span>${dateStr} ${timeStr}</span></div>
+      <div class="vp-label">${v.label}</div>
+      <div class="vp-stats">${v.stats.done}/${v.stats.total} tasks · ${v.stats.pct}% complete</div>
+      <div class="vp-actions">
+        <button class="vp-btn restore" onclick="restoreVersion(${i})">Restore</button>
+        <button class="vp-btn del" onclick="deleteVersion(${i})">Delete</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── EXPORT ──
+function exportHTML() {
+  save();
+  const html = document.documentElement.outerHTML;
+  const blob = new Blob([html], { type: 'text/html' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  const client = state.meta.client !== '—' ? state.meta.client.replace(/[^a-zA-Z0-9]/g,'-').toLowerCase() : 'project';
+  a.download = `wp-dashboard-${client}-${new Date().toISOString().slice(0,10)}.html`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+  log(`> <span class="g">Exported as HTML</span>`);
+}
+
+// ── AUTO-SAVE on contenteditable blur ──
+document.addEventListener('focusout', (e) => {
+  if (e.target.id && ['projTitle','projSubtitle','metaClient','metaStart','metaTarget','metaScope','xDays'].includes(e.target.id)) {
+    save();
+  }
+});
+
+// ── INIT ──
+loadState();
+render();
+</script>
+</body>
+</html>

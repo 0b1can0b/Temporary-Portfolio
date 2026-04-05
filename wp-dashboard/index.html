@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WordPress Project Dashboard — Hetul Darji</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #0a0e14;
+  --bg2: #0d1117;
+  --bg3: #111820;
+  --bg4: #161d27;
+  --green: #00e676;
+  --green-dim: rgba(0,230,118,0.08);
+  --green-mid: rgba(0,230,118,0.15);
+  --green-border: rgba(0,230,118,0.12);
+  --cyan: #00bcd4;
+  --amber: #ffc107;
+  --red: #ff5252;
+  --magenta: #e040fb;
+  --text: #b0bec5;
+  --text2: #78909c;
+  --text3: #546e7a;
+  --white: #eceff1;
+  --mono: 'IBM Plex Mono', monospace;
+  --sans: 'Outfit', sans-serif;
+}
+
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--mono);
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text);
+  background: #060a0f;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection { background: rgba(0,230,118,0.2); color: var(--green); }
+
+/* === CHROME BAR === */
+.chrome {
+  background: var(--bg2);
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid var(--green-border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(12px);
+}
+.dots { display: flex; gap: 6px; }
+.dot { width: 12px; height: 12px; border-radius: 50%; }
+.dot-r { background: #ff5f56; }
+.dot-y { background: #ffbd2e; }
+.dot-g { background: #27c93f; }
+.chrome-path {
+  margin-left: 16px;
+  color: var(--green);
+  font-size: 13px;
+  opacity: 0.7;
+}
+.chrome-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 12px;
+}
+.status-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-size: 11px;
+}
+.pulse {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--green);
+  animation: pulse 2s ease infinite;
+}
+@keyframes pulse { 0%,100%{opacity:0.5;transform:scale(1)} 50%{opacity:1;transform:scale(1.3)} }
+
+/* === LAYOUT === */
+.wrap {
+  max-width: 1100px;
+  margin: 0 auto;
+  min-height: 100vh;
+}
+
+/* === HEADER === */
+.header {
+  padding: 32px 28px 24px;
+  border-bottom: 1px solid var(--green-border);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.header-left h1 {
+  font-family: var(--sans);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 4px;
+}
+.header-left .subtitle {
+  font-size: 13px;
+  color: var(--text3);
+}
+.header-meta {
+  display: flex;
+  gap: 24px;
+  font-size: 12px;
+  color: var(--text3);
+  flex-wrap: wrap;
+}
+.header-meta span { white-space: nowrap; }
+.header-meta .val { color: var(--cyan); }
+
+/* === PROJECT INFO === */
+.project-info {
+  padding: 20px 28px;
+  border-bottom: 1px solid var(--green-border);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  background: var(--bg2);
+}
+.info-item {
+  font-size: 13px;
+}
+.info-label {
+  color: var(--text3);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 2px;
+}
+.info-val { color: var(--text); }
+
+/* === HEALTH BAR === */
+.health {
+  padding: 24px 28px;
+  border-bottom: 1px solid var(--green-border);
+}
+.health-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.health-label {
+  font-size: 13px;
+  color: var(--text2);
+  font-family: var(--sans);
+  font-weight: 500;
+}
+.health-stats {
+  display: flex;
+  gap: 20px;
+  font-size: 12px;
+  color: var(--text3);
+}
+.health-stats .num { color: var(--green); font-weight: 600; }
+.health-stats .num.amber { color: var(--amber); }
+.progress-track {
+  height: 6px;
+  background: rgba(0,230,118,0.06);
+  border-radius: 3px;
+  overflow: hidden;
+  position: relative;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--green), var(--cyan));
+  border-radius: 3px;
+  transition: width 1.5s cubic-bezier(0.22,1,0.36,1);
+  position: relative;
+}
+.progress-fill::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: -2px;
+  bottom: -2px;
+  width: 12px;
+  background: var(--green);
+  border-radius: 2px;
+  box-shadow: 0 0 12px rgba(0,230,118,0.5);
+}
+
+/* === STAT CARDS === */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--green-border);
+  border-bottom: 1px solid var(--green-border);
+}
+.stat {
+  background: var(--bg);
+  padding: 20px 16px;
+  text-align: center;
+}
+.stat-num {
+  font-family: var(--sans);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--green);
+  margin-bottom: 4px;
+}
+.stat-num.cyan { color: var(--cyan); }
+.stat-num.amber { color: var(--amber); }
+.stat-num.red { color: var(--red); }
+.stat-desc {
+  font-size: 11px;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-family: var(--sans);
+}
+
+/* === MAIN GRID === */
+.main {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+}
+
+/* === SIDEBAR === */
+.sidebar {
+  border-right: 1px solid var(--green-border);
+  padding: 16px 0;
+  position: sticky;
+  top: 45px;
+  height: calc(100vh - 45px);
+  overflow-y: auto;
+}
+.sidebar-title {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--text3);
+  padding: 8px 20px;
+  margin-bottom: 4px;
+  font-family: var(--sans);
+  font-weight: 600;
+}
+.phase-nav {
+  list-style: none;
+}
+.phase-nav li {
+  padding: 8px 20px;
+  font-size: 13px;
+  color: var(--text3);
+  cursor: pointer;
+  transition: all 0.2s;
+  border-left: 2px solid transparent;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.phase-nav li:hover {
+  color: var(--text);
+  background: var(--green-dim);
+}
+.phase-nav li.active {
+  color: var(--green);
+  border-left-color: var(--green);
+  background: var(--green-dim);
+}
+.phase-nav li .ph-num {
+  font-size: 11px;
+  color: var(--text3);
+  width: 22px;
+  flex-shrink: 0;
+}
+.phase-nav li.active .ph-num { color: var(--green); }
+.phase-nav li .ph-check {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--text3);
+}
+.phase-nav li.complete .ph-check { color: var(--green); }
+
+/* === CONTENT === */
+.content {
+  padding: 0;
+  overflow-y: auto;
+}
+.phase-section {
+  border-bottom: 1px solid var(--green-border);
+}
+.phase-header {
+  padding: 18px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+  user-select: none;
+}
+.phase-header:hover { background: var(--green-dim); }
+.phase-header .arrow {
+  color: var(--text3);
+  font-size: 12px;
+  transition: transform 0.3s;
+  width: 16px;
+  text-align: center;
+}
+.phase-header.open .arrow { transform: rotate(90deg); }
+.phase-header .phase-title {
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--white);
+  flex: 1;
+}
+.phase-header .phase-count {
+  font-size: 12px;
+  color: var(--text3);
+}
+.phase-header .phase-time {
+  font-size: 11px;
+  color: var(--text3);
+  padding: 2px 8px;
+  border: 1px solid rgba(0,230,118,0.08);
+  border-radius: 2px;
+}
+
+/* === TASK LIST === */
+.task-list {
+  display: none;
+  padding: 0 24px 20px;
+}
+.phase-section.open .task-list { display: block; }
+.task {
+  display: grid;
+  grid-template-columns: 24px 1fr auto auto;
+  gap: 8px 12px;
+  align-items: start;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+  font-size: 13px;
+}
+.task:last-child { border-bottom: none; }
+.task-check {
+  width: 16px;
+  height: 16px;
+  border: 1.5px solid var(--text3);
+  border-radius: 2px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+.task-check:hover { border-color: var(--green); }
+.task-check.checked {
+  border-color: var(--green);
+  background: rgba(0,230,118,0.15);
+}
+.task-check.checked::after {
+  content: '✓';
+  color: var(--green);
+  font-size: 11px;
+  font-weight: 700;
+}
+.task.done .task-name { color: var(--text3); text-decoration: line-through; opacity: 0.6; }
+.task-name { color: var(--text); }
+.task-notes {
+  font-size: 12px;
+  color: var(--text3);
+  grid-column: 2;
+  margin-top: -4px;
+  font-style: italic;
+}
+.task-time {
+  font-size: 12px;
+  color: var(--text3);
+  white-space: nowrap;
+}
+.task-priority {
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 2px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+  font-family: var(--sans);
+  white-space: nowrap;
+}
+.pri-high { background: rgba(255,193,7,0.12); color: var(--amber); }
+.pri-critical { background: rgba(255,82,82,0.12); color: var(--red); }
+.pri-medium { background: rgba(0,188,212,0.12); color: var(--cyan); }
+.pri-low { background: rgba(0,230,118,0.08); color: var(--green); }
+
+/* === LOG === */
+.log {
+  padding: 16px 28px;
+  background: var(--bg2);
+  border-top: 1px solid var(--green-border);
+  font-size: 12px;
+  color: var(--text3);
+}
+.log-line {
+  display: flex;
+  gap: 12px;
+  padding: 2px 0;
+}
+.log-time { color: var(--text3); white-space: nowrap; }
+.log-msg { color: var(--text2); }
+.log-msg .green { color: var(--green); }
+
+/* === FOOTER === */
+.footer {
+  padding: 16px 28px;
+  text-align: center;
+  font-size: 11px;
+  color: var(--text3);
+  border-top: 1px solid var(--green-border);
+  letter-spacing: 1px;
+}
+
+/* === STACK BAR === */
+.stack-bar {
+  padding: 12px 28px;
+  background: var(--bg3);
+  border-bottom: 1px solid var(--green-border);
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-size: 12px;
+}
+.stack-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text3);
+}
+.stack-dot {
+  width: 6px; height: 6px;
+  border-radius: 1px;
+  background: var(--green);
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+  .main { grid-template-columns: 1fr; }
+  .sidebar {
+    position: relative;
+    height: auto;
+    top: 0;
+    border-right: none;
+    border-bottom: 1px solid var(--green-border);
+    padding: 12px 0;
+    display: flex;
+    overflow-x: auto;
+    gap: 0;
+  }
+  .sidebar-title { display: none; }
+  .phase-nav { display: flex; white-space: nowrap; }
+  .phase-nav li {
+    padding: 8px 14px;
+    border-left: none;
+    border-bottom: 2px solid transparent;
+    font-size: 12px;
+  }
+  .phase-nav li.active {
+    border-bottom-color: var(--green);
+    border-left: none;
+  }
+  .phase-nav li .ph-check { display: none; }
+  .stats { grid-template-columns: repeat(2, 1fr); }
+  .header { padding: 20px 16px; }
+  .health { padding: 20px 16px; }
+  .phase-header { padding: 14px 16px; }
+  .task-list { padding: 0 16px 16px; }
+  .task { grid-template-columns: 24px 1fr auto; }
+  .task-priority { display: none; }
+}
+
+/* === FADE IN === */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.phase-section { animation: fadeUp 0.3s ease forwards; }
+</style>
+</head>
+<body>
+
+<!-- CHROME BAR -->
+<div class="chrome">
+  <div class="dots">
+    <div class="dot dot-r"></div>
+    <div class="dot dot-y"></div>
+    <div class="dot dot-g"></div>
+  </div>
+  <span class="chrome-path">hetul@dev:~/projects$ launch_dashboard.sh</span>
+  <div class="chrome-right">
+    <div class="status-badge">
+      <div class="pulse"></div>
+      tracking
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-left">
+      <h1>WordPress Project Checklist</h1>
+      <div class="subtitle">14-Phase Build System · Solo Dev · Hetul Darji</div>
+    </div>
+    <div class="header-meta">
+      <span>Client: <span class="val" id="clientName">—</span></span>
+      <span>Start: <span class="val" id="startDate">—</span></span>
+      <span>Target: <span class="val" id="targetDate">—</span></span>
+    </div>
+  </div>
+
+  <!-- STACK BAR -->
+  <div class="stack-bar">
+    <div class="stack-item"><div class="stack-dot"></div> Hello Theme</div>
+    <div class="stack-item"><div class="stack-dot"></div> Elementor Pro</div>
+    <div class="stack-item"><div class="stack-dot"></div> ACF Pro</div>
+    <div class="stack-item"><div class="stack-dot"></div> FlyingPress</div>
+    <div class="stack-item"><div class="stack-dot"></div> Fluent Forms</div>
+    <div class="stack-item"><div class="stack-dot"></div> UpdraftPlus</div>
+    <div class="stack-item"><div class="stack-dot"></div> RankMath</div>
+    <div class="stack-item"><div class="stack-dot"></div> WPCode</div>
+    <div class="stack-item"><div class="stack-dot"></div> Wordfence</div>
+  </div>
+
+  <!-- HEALTH -->
+  <div class="health">
+    <div class="health-top">
+      <span class="health-label">Project Health</span>
+      <div class="health-stats">
+        <span>Tasks: <span class="num" id="tasksDone">0</span>/<span id="tasksTotal">0</span></span>
+        <span>Est. remaining: <span class="num amber" id="timeRemain">—</span></span>
+        <span>Completion: <span class="num" id="pctComplete">0%</span></span>
+      </div>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progressBar" style="width: 0%"></div>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-num" id="statPhases">14</div>
+      <div class="stat-desc">Phases</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num cyan" id="statTasks">0</div>
+      <div class="stat-desc">Total Tasks</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num amber" id="statHours">0</div>
+      <div class="stat-desc">Est. Hours</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num red" id="statDays">10–14</div>
+      <div class="stat-desc">Working Days</div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="sidebar-title">Phases</div>
+      <ul class="phase-nav" id="phaseNav"></ul>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content" id="content"></div>
+  </div>
+
+  <!-- LOG -->
+  <div class="log" id="log">
+    <div class="log-line">
+      <span class="log-time">[system]</span>
+      <span class="log-msg">> Dashboard loaded. <span class="green">All systems ready.</span></span>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    HETUL DARJI · FRONTEND WORDPRESS DEVELOPER · FIGMA → ELEMENTOR · PERFORMANCE & SEO
+  </div>
+
+</div>
+
+<script>
+const phases = [
+  {
+    name: "Hosting, Domain & Server Setup",
+    tasks: [
+      { name: "Purchase domain for client", notes: "Confirm preferred registrar with client", time: "15 min", priority: "high" },
+      { name: "Purchase / provision hosting", notes: "Cloudways, RunCloud, SiteGround etc.", time: "20 min", priority: "high" },
+      { name: "Point domain DNS to host nameservers", notes: "Confirm propagation — up to 24 hrs", time: "10 min", priority: "high" },
+      { name: "SSL certificate — install & force HTTPS", notes: "Auto via host or Let's Encrypt", time: "15 min", priority: "critical" },
+      { name: "www → non-www redirect (or vice versa)", notes: "Pick canonical form; set in .htaccess", time: "10 min", priority: "medium" },
+      { name: "Enable Coming Soon / Maintenance page", notes: "Professional holding page while building", time: "10 min", priority: "medium" },
+      { name: "Create staging environment", notes: "Build on staging, push to live at launch", time: "30 min", priority: "high" },
+      { name: "Set up daily backup", notes: "UpdraftPlus → Google Drive / host snapshots", time: "20 min", priority: "critical" },
+    ]
+  },
+  {
+    name: "WordPress Installation & Config",
+    tasks: [
+      { name: "Install WordPress", notes: "1-click or manual; delete default content", time: "10 min", priority: "high" },
+      { name: "Set permalink structure", notes: "/%postname%/ — before any CPT registration", time: "5 min", priority: "critical" },
+      { name: "Configure WP Settings", notes: "Title, tagline, timezone, email", time: "10 min", priority: "medium" },
+      { name: "Delete default plugins", notes: "Hello Dolly, Akismet trial", time: "5 min", priority: "low" },
+      { name: "Delete default themes", notes: "Keep Twenty-Twenty-X as fallback", time: "5 min", priority: "low" },
+      { name: "Install & activate Hello theme", notes: "Minimal base for Elementor", time: "5 min", priority: "high" },
+      { name: "Install & activate Elementor Pro", notes: "License key, connect to account", time: "10 min", priority: "high" },
+      { name: "Set WP_DEBUG = false", notes: "Critical for production", time: "5 min", priority: "critical" },
+      { name: "Add strong AUTH_KEYS / SALTS", notes: "Generate fresh at wordpress.org/secret-key", time: "10 min", priority: "high" },
+      { name: "Disable post revisions limit", notes: "define('WP_POST_REVISIONS', 5);", time: "5 min", priority: "low" },
+    ]
+  },
+  {
+    name: "Security Hardening",
+    tasks: [
+      { name: "Change wp-login.php URL", notes: "WPS Hide Login (lightweight)", time: "10 min", priority: "high" },
+      { name: "Limit login attempts", notes: "Limit Login Attempts Reloaded", time: "10 min", priority: "high" },
+      { name: "Disable file editing in wp-config.php", notes: "DISALLOW_FILE_EDIT = true", time: "5 min", priority: "critical" },
+      { name: "Disable XML-RPC", notes: "Add to .htaccess or functions.php", time: "10 min", priority: "high" },
+      { name: "Hide WordPress version number", notes: "Remove from header & feeds", time: "10 min", priority: "medium" },
+      { name: "Protect wp-admin directory", notes: "IP whitelist or basic auth", time: "15 min", priority: "medium" },
+      { name: "Set correct file permissions", notes: "Files: 644, Folders: 755, wp-config: 600", time: "10 min", priority: "critical" },
+    ]
+  },
+  {
+    name: "Plugin Installation & Config",
+    tasks: [
+      { name: "ACF Pro — install & activate", notes: "License key; configure after CPT setup", time: "10 min", priority: "high" },
+      { name: "FlyingPress — install & configure", notes: "Cache, CSS/JS optimisation, DB cleanup", time: "20 min", priority: "high" },
+      { name: "WP-Optimize or FlyingPress DB tools", notes: "Post revisions, auto-drafts, transients", time: "10 min", priority: "medium" },
+      { name: "RankMath — install & run wizard", notes: "Full setup wizard completion", time: "20 min", priority: "high" },
+      { name: "Fluent Forms — install", notes: "Handles submissions + DB storage", time: "15 min", priority: "high" },
+      { name: "UpdraftPlus — configure", notes: "Daily auto-backup to Google Drive", time: "20 min", priority: "critical" },
+      { name: "WPS Hide Login", notes: "Custom login URL", time: "5 min", priority: "medium" },
+      { name: "Limit Login Attempts Reloaded", notes: "", time: "5 min", priority: "low" },
+      { name: "GDPR / Cookie consent plugin", notes: "Cookiebot or Complianz if EU audience", time: "20 min", priority: "medium" },
+    ]
+  },
+  {
+    name: "ACF & Custom Post Types",
+    tasks: [
+      { name: "Register CPT: Services", notes: "Slug, labels, supports, rewrite", time: "20 min", priority: "high" },
+      { name: "Register CPT: Projects", notes: "Slug, labels, supports, rewrite", time: "20 min", priority: "high" },
+      { name: "Register CPT: Blog (Posts)", notes: "Default WP Posts — configure categories/tags", time: "10 min", priority: "medium" },
+      { name: "Create ACF field groups for each CPT", notes: "Only fields actually used in design", time: "30 min", priority: "critical" },
+      { name: "Create ACF Options Page", notes: "Header/footer/global content fields", time: "20 min", priority: "high" },
+      { name: "Test CPT creation & ACF fields", notes: "Enter dummy data for design build", time: "15 min", priority: "high" },
+      { name: "Flush rewrite rules", notes: "Settings → Permalinks → Save", time: "2 min", priority: "critical" },
+    ]
+  },
+  {
+    name: "Global Elements (Header/Footer)",
+    tasks: [
+      { name: "Build Header in Theme Builder", notes: "Sticky, logo (SVG), nav links", time: "2.5 hr", priority: "critical" },
+      { name: "Build Mobile Off-Canvas Menu", notes: "Full mobile nav, test all breakpoints", time: "1.5 hr", priority: "critical" },
+      { name: "Build Before Footer section", notes: "CTA strip / newsletter per design", time: "1 hr", priority: "medium" },
+      { name: "Build Footer in Theme Builder", notes: "Links, social icons, copyright, legal", time: "1.5 hr", priority: "high" },
+      { name: "Assign header/footer to entire site", notes: "Display conditions → Entire Site", time: "10 min", priority: "high" },
+      { name: "Upload Favicon", notes: "512×512 PNG in WP Customizer", time: "5 min", priority: "medium" },
+      { name: "Upload Site Logo SVG", notes: "Confirm SVG sanitisation enabled", time: "5 min", priority: "high" },
+    ]
+  },
+  {
+    name: "Page Build — Figma → Elementor",
+    tasks: [
+      { name: "Export all images from Figma", notes: "Correct sizes; logos as SVG", time: "30 min", priority: "high" },
+      { name: "Convert raster images to WebP", notes: "Manual conversion, keep originals", time: "20 min", priority: "high" },
+      { name: "Self-host Latin fonts (WOFF2)", notes: "No Google Fonts CDN", time: "20 min", priority: "high" },
+      { name: "Set global Elementor colours & typography", notes: "Match Figma before building", time: "30 min", priority: "critical" },
+      { name: "Home Page (8 sections)", notes: "Hero, services preview, about teaser, etc.", time: "6 hr", priority: "critical" },
+      { name: "About Page (8 sections)", notes: "Team, story, values, etc.", time: "5 hr", priority: "high" },
+      { name: "Contact Page (4 sections)", notes: "Map, form, address, CTA", time: "2.5 hr", priority: "high" },
+      { name: "Clients Page (4 sections)", notes: "Logo grid, testimonials", time: "2.5 hr", priority: "medium" },
+      { name: "Services Listing Page", notes: "CPT archive or static listing", time: "2.5 hr", priority: "high" },
+      { name: "Projects Listing Page", notes: "CPT archive — grid or masonry", time: "2.5 hr", priority: "high" },
+      { name: "Blog Listing Page", notes: "Posts archive with pagination", time: "2.5 hr", priority: "medium" },
+      { name: "Services Inner Template (ACF)", notes: "Single CPT template — ACF driven", time: "3.5 hr", priority: "high" },
+      { name: "Projects Inner Template (ACF)", notes: "Single CPT template — ACF driven", time: "3.5 hr", priority: "high" },
+      { name: "Blog Inner Template", notes: "Author, date, content, related", time: "3.5 hr", priority: "medium" },
+      { name: "404 Page", notes: "On-brand, link back to Home", time: "45 min", priority: "medium" },
+      { name: "Search Results Page", notes: "WP default or custom template", time: "45 min", priority: "medium" },
+      { name: "Taxonomy / Archive Pages", notes: "Category, tag, type archives", time: "1 hr", priority: "medium" },
+      { name: "Breadcrumb Banner / Hero", notes: "Global inner page with dynamic title", time: "1 hr", priority: "high" },
+      { name: "Privacy Policy & Terms Pages", notes: "Plain text, styled to match site", time: "1 hr", priority: "low" },
+    ]
+  },
+  {
+    name: "Forms, SMTP & Email",
+    tasks: [
+      { name: "Build contact form", notes: "Name, email, message — honeypot spam", time: "30 min", priority: "high" },
+      { name: "Configure DB submission storage", notes: "Entries tab in plugin dashboard", time: "10 min", priority: "medium" },
+      { name: "Set up SMTP", notes: "SendGrid / Brevo free tier", time: "30 min", priority: "critical" },
+      { name: "Send test email from form", notes: "", time: "5 min", priority: "high" },
+      { name: "Check deliverability at mail-tester.com", notes: "Aim for 9+/10 score", time: "15 min", priority: "high" },
+      { name: "Verify SPF / DKIM records", notes: "SMTP provider will give instructions", time: "20 min", priority: "critical" },
+    ]
+  },
+  {
+    name: "Performance Optimisation",
+    tasks: [
+      { name: "FlyingPress — enable page cache", notes: "", time: "10 min", priority: "high" },
+      { name: "FlyingPress — minify & combine CSS/JS", notes: "Test for visual breaks after", time: "20 min", priority: "high" },
+      { name: "FlyingPress — remove unused CSS", notes: "Per-page or sitewide — test carefully", time: "20 min", priority: "critical" },
+      { name: "FlyingPress — enable lazy loading", notes: "Images & iframes", time: "10 min", priority: "high" },
+      { name: "FlyingPress — preload critical assets", notes: "Fonts, hero image", time: "15 min", priority: "high" },
+      { name: "Database cleanup", notes: "Revisions, spam, auto-drafts, transients", time: "10 min", priority: "medium" },
+      { name: "Verify all images WebP & compressed", notes: "Use DevTools Network tab", time: "20 min", priority: "high" },
+      { name: "Verify self-hosted fonts loading", notes: "No external font requests", time: "10 min", priority: "medium" },
+      { name: "Run PageSpeed Insights", notes: "Target 90+ desktop & mobile", time: "20 min", priority: "critical" },
+      { name: "Run WebPageTest", notes: "Check TTFB, LCP, CLS", time: "15 min", priority: "high" },
+    ]
+  },
+  {
+    name: "SEO",
+    tasks: [
+      { name: "SEO plugin setup wizard complete", notes: "Site type, social profiles, knowledge graph", time: "20 min", priority: "high" },
+      { name: "XML Sitemap generated & verified", notes: "Submit URL to GSC", time: "10 min", priority: "critical" },
+      { name: "robots.txt reviewed", notes: "No important pages blocked", time: "10 min", priority: "high" },
+      { name: "Canonical tags on all pages", notes: "Handled by SEO plugin — verify", time: "10 min", priority: "high" },
+      { name: "Schema: Organisation / LocalBusiness", notes: "SEO plugin or custom JSON-LD", time: "20 min", priority: "high" },
+      { name: "Schema: BreadcrumbList", notes: "On all inner pages", time: "15 min", priority: "medium" },
+      { name: "Schema: Article on Blog posts", notes: "Date, author, headline", time: "15 min", priority: "medium" },
+      { name: "Open Graph meta tags", notes: "Title, description, OG image per page", time: "20 min", priority: "high" },
+      { name: "Twitter / X Card meta tags", notes: "summary_large_image for blog posts", time: "10 min", priority: "medium" },
+      { name: "Google Search Console — verify", notes: "HTML tag method via SEO plugin", time: "15 min", priority: "critical" },
+      { name: "GSC — submit sitemap", notes: "", time: "5 min", priority: "high" },
+      { name: "GSC — request indexing on key pages", notes: "Home, Services, About at minimum", time: "10 min", priority: "high" },
+      { name: "Google Analytics 4 — set up", notes: "Connect via SEO plugin or GA4 site tag", time: "20 min", priority: "high" },
+      { name: "Title tags — unique for every page", notes: "Primary keyword near front", time: "20 min", priority: "critical" },
+      { name: "Meta descriptions — unique for every page", notes: "150–160 chars, include CTA", time: "20 min", priority: "high" },
+      { name: "H1 on every page — one only", notes: "Verify with SEO plugin analysis", time: "10 min", priority: "high" },
+      { name: "Image alt text on all images", notes: "Decorative images: alt empty", time: "15 min", priority: "medium" },
+    ]
+  },
+  {
+    name: "Legal & Compliance",
+    tasks: [
+      { name: "Privacy Policy page live & linked", notes: "Drafted by client or AI-assisted", time: "30 min", priority: "high" },
+      { name: "Terms & Conditions page live", notes: "Linked in footer", time: "20 min", priority: "high" },
+      { name: "Cookie consent banner configured", notes: "Block non-essential before consent", time: "30 min", priority: "high" },
+      { name: "Contact form Privacy checkbox", notes: "If collecting personal data", time: "10 min", priority: "medium" },
+      { name: "Data retention policy agreed", notes: "How long to store, who has access", time: "10 min", priority: "medium" },
+    ]
+  },
+  {
+    name: "QA & Testing",
+    tasks: [
+      { name: "Chrome — full site walkthrough", notes: "", time: "30 min", priority: "high" },
+      { name: "Firefox — full site walkthrough", notes: "", time: "20 min", priority: "high" },
+      { name: "Safari — full site walkthrough", notes: "Safari is the new IE — test thoroughly", time: "30 min", priority: "critical" },
+      { name: "Desktop (1440px, 1920px)", notes: "", time: "20 min", priority: "high" },
+      { name: "Tablet (768px, 1024px)", notes: "", time: "20 min", priority: "high" },
+      { name: "Mobile — real device test", notes: "iOS Safari + Android Chrome, not just DevTools", time: "30 min", priority: "critical" },
+      { name: "All navigation links working", notes: "", time: "15 min", priority: "high" },
+      { name: "Contact form submit & receive test", notes: "Check email AND DB entry", time: "10 min", priority: "critical" },
+      { name: "All CPT inner pages rendering", notes: "At least 2–3 real entries per CPT", time: "20 min", priority: "high" },
+      { name: "Pagination working on listing pages", notes: "", time: "10 min", priority: "medium" },
+      { name: "Search results page working", notes: "", time: "10 min", priority: "medium" },
+      { name: "404 page working correctly", notes: "Navigate to /non-existent-page", time: "5 min", priority: "medium" },
+      { name: "HTTPS enforced — no mixed content", notes: "Check browser console on every page", time: "15 min", priority: "critical" },
+    ]
+  },
+  {
+    name: "Pre-Launch & Go Live",
+    tasks: [
+      { name: "Full site backup before launch", notes: "Manual UpdraftPlus backup", time: "10 min", priority: "critical" },
+      { name: "WP_DEBUG = false confirmed", notes: "", time: "2 min", priority: "critical" },
+      { name: "Coming Soon / Maintenance OFF", notes: "", time: "2 min", priority: "high" },
+      { name: "All placeholder content replaced", notes: "Lorem ipsum hunt", time: "20 min", priority: "critical" },
+      { name: "Client-provided content is final", notes: "", time: "10 min", priority: "high" },
+      { name: "Search engine visibility ON", notes: "Uncheck 'Discourage search engines'", time: "2 min", priority: "critical" },
+      { name: "GSC — final index request", notes: "All key pages", time: "10 min", priority: "high" },
+      { name: "UptimeRobot monitoring set up", notes: "5-min interval; alert to email/Telegram", time: "10 min", priority: "medium" },
+      { name: "Final PageSpeed Insights — document", notes: "Screenshot and share with client", time: "10 min", priority: "high" },
+      { name: "DNS propagation confirmed", notes: "dnschecker.org", time: "5 min", priority: "high" },
+    ]
+  },
+  {
+    name: "Client Handover",
+    tasks: [
+      { name: "WP Admin cleaned up for client", notes: "Hide irrelevant menu items", time: "20 min", priority: "medium" },
+      { name: "Strong admin password for client", notes: "Use password manager; share securely", time: "5 min", priority: "critical" },
+      { name: "Handover document delivered", notes: "Credentials, hosting, domain, plugins, renewals", time: "45 min", priority: "critical" },
+      { name: "Brief client on ACF fields", notes: "Screencast or written step-by-step", time: "30 min", priority: "high" },
+      { name: "Brief client on adding posts / CPT", notes: "", time: "20 min", priority: "high" },
+      { name: "Explain backup system", notes: "What it does, when it runs", time: "10 min", priority: "medium" },
+      { name: "Revision rounds policy communicated", notes: "How many included, what counts", time: "10 min", priority: "high" },
+      { name: "Support period start date agreed", notes: "30/60/90 days — define scope", time: "10 min", priority: "high" },
+    ]
+  }
+];
+
+// State
+let checkedTasks = new Set();
+try {
+  const saved = localStorage.getItem('wp_checklist_state');
+  if (saved) checkedTasks = new Set(JSON.parse(saved));
+} catch(e) {}
+
+function saveState() {
+  try { localStorage.setItem('wp_checklist_state', JSON.stringify([...checkedTasks])); } catch(e) {}
+}
+
+function getTaskId(pi, ti) { return `${pi}-${ti}`; }
+
+function parseTime(str) {
+  if (!str) return 0;
+  const h = str.match(/([\d.]+)\s*hr/);
+  const m = str.match(/([\d.]+)\s*min/);
+  return (h ? parseFloat(h[1]) * 60 : 0) + (m ? parseFloat(m[1]) : 0);
+}
+
+function calcStats() {
+  let total = 0, done = 0, totalMin = 0, doneMin = 0;
+  phases.forEach((p, pi) => {
+    p.tasks.forEach((t, ti) => {
+      total++;
+      const mins = parseTime(t.time);
+      totalMin += mins;
+      if (checkedTasks.has(getTaskId(pi, ti))) {
+        done++;
+        doneMin += mins;
+      }
+    });
+  });
+  return { total, done, totalMin, doneMin, remainMin: totalMin - doneMin };
+}
+
+function updateUI() {
+  const s = calcStats();
+  const pct = s.total ? Math.round((s.done / s.total) * 100) : 0;
+  document.getElementById('tasksDone').textContent = s.done;
+  document.getElementById('tasksTotal').textContent = s.total;
+  document.getElementById('pctComplete').textContent = pct + '%';
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('statTasks').textContent = s.total;
+  document.getElementById('statHours').textContent = Math.round(s.totalMin / 60);
+  document.getElementById('timeRemain').textContent = Math.round(s.remainMin / 60) + 'h';
+
+  // Update sidebar counts
+  phases.forEach((p, pi) => {
+    const li = document.querySelector(`[data-phase="${pi}"]`);
+    if (!li) return;
+    const pDone = p.tasks.filter((_, ti) => checkedTasks.has(getTaskId(pi, ti))).length;
+    const check = li.querySelector('.ph-check');
+    if (check) check.textContent = `${pDone}/${p.tasks.length}`;
+    if (pDone === p.tasks.length) {
+      li.classList.add('complete');
+    } else {
+      li.classList.remove('complete');
+    }
+  });
+
+  saveState();
+}
+
+function addLog(msg) {
+  const log = document.getElementById('log');
+  const now = new Date();
+  const time = now.toTimeString().slice(0, 8);
+  const line = document.createElement('div');
+  line.className = 'log-line';
+  line.innerHTML = `<span class="log-time">[${time}]</span><span class="log-msg">${msg}</span>`;
+  log.appendChild(line);
+  log.scrollTop = log.scrollHeight;
+}
+
+function buildSidebar() {
+  const nav = document.getElementById('phaseNav');
+  phases.forEach((p, i) => {
+    const li = document.createElement('li');
+    li.dataset.phase = i;
+    const pDone = p.tasks.filter((_, ti) => checkedTasks.has(getTaskId(i, ti))).length;
+    li.innerHTML = `<span class="ph-num">${String(i+1).padStart(2,'0')}</span>${p.name}<span class="ph-check">${pDone}/${p.tasks.length}</span>`;
+    li.addEventListener('click', () => {
+      document.querySelectorAll('.phase-nav li').forEach(l => l.classList.remove('active'));
+      li.classList.add('active');
+      const section = document.querySelector(`[data-section="${i}"]`);
+      if (section) {
+        // Open the section
+        section.classList.add('open');
+        section.querySelector('.phase-header').classList.add('open');
+        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+    if (pDone === p.tasks.length) li.classList.add('complete');
+    nav.appendChild(li);
+  });
+}
+
+function buildContent() {
+  const content = document.getElementById('content');
+  phases.forEach((p, pi) => {
+    const section = document.createElement('div');
+    section.className = 'phase-section';
+    section.dataset.section = pi;
+
+    const totalTime = p.tasks.reduce((acc, t) => acc + parseTime(t.time), 0);
+    const timeStr = totalTime >= 60 ? `~${(totalTime/60).toFixed(1)}h` : `${totalTime}m`;
+
+    const pDone = p.tasks.filter((_, ti) => checkedTasks.has(getTaskId(pi, ti))).length;
+
+    let header = document.createElement('div');
+    header.className = 'phase-header';
+    header.innerHTML = `
+      <span class="arrow">▶</span>
+      <span class="phase-title">Phase ${pi+1} — ${p.name}</span>
+      <span class="phase-count">${pDone}/${p.tasks.length}</span>
+      <span class="phase-time">${timeStr}</span>
+    `;
+    header.addEventListener('click', () => {
+      section.classList.toggle('open');
+      header.classList.toggle('open');
+    });
+
+    let taskList = document.createElement('div');
+    taskList.className = 'task-list';
+
+    p.tasks.forEach((t, ti) => {
+      const id = getTaskId(pi, ti);
+      const isDone = checkedTasks.has(id);
+      const task = document.createElement('div');
+      task.className = 'task' + (isDone ? ' done' : '');
+
+      const priClass = t.priority === 'critical' ? 'pri-critical' : t.priority === 'high' ? 'pri-high' : t.priority === 'medium' ? 'pri-medium' : 'pri-low';
+
+      task.innerHTML = `
+        <div class="task-check ${isDone ? 'checked' : ''}" data-id="${id}"></div>
+        <span class="task-name">${t.name}</span>
+        <span class="task-time">${t.time}</span>
+        <span class="task-priority ${priClass}">${t.priority}</span>
+        ${t.notes ? `<span class="task-notes">${t.notes}</span>` : ''}
+      `;
+
+      const check = task.querySelector('.task-check');
+      check.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (checkedTasks.has(id)) {
+          checkedTasks.delete(id);
+          task.classList.remove('done');
+          check.classList.remove('checked');
+        } else {
+          checkedTasks.add(id);
+          task.classList.add('done');
+          check.classList.add('checked');
+          addLog(`> Task completed: <span class="green">${t.name}</span> [Phase ${pi+1}]`);
+        }
+        updateUI();
+        // Update the header count
+        const newDone = p.tasks.filter((_, tti) => checkedTasks.has(getTaskId(pi, tti))).length;
+        header.querySelector('.phase-count').textContent = `${newDone}/${p.tasks.length}`;
+      });
+
+      taskList.appendChild(task);
+    });
+
+    section.appendChild(header);
+    section.appendChild(taskList);
+    content.appendChild(section);
+  });
+}
+
+// Init
+buildSidebar();
+buildContent();
+updateUI();
+
+// Open first phase by default
+const firstSection = document.querySelector('[data-section="0"]');
+if (firstSection) {
+  firstSection.classList.add('open');
+  firstSection.querySelector('.phase-header').classList.add('open');
+}
+document.querySelector('.phase-nav li')?.classList.add('active');
+</script>
+
+</body>
+</html>
