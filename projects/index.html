@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projects — Hetul Darji</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --bg: #FAFAF8; --surface: #FFFFFF; --ink: #1A1A18; --ink2: #3D3D3A;
+  --ink3: #6B6B66; --ink4: #9C9C96; --accent: #2D5A3D;
+  --accent-light: rgba(45,90,61,0.06); --border: #E2E0DA;
+  --serif: 'Instrument Serif', Georgia, serif;
+  --sans: 'DM Sans', system-ui, sans-serif;
+  --radius: 8px;
+}
+html { scroll-behavior: smooth; }
+body { font-family: var(--sans); font-size: 16px; line-height: 1.7; color: var(--ink2); background: var(--bg); -webkit-font-smoothing: antialiased; }
+::selection { background: rgba(45,90,61,0.12); }
+a { color: var(--accent); text-decoration: none; }
+img { display: block; max-width: 100%; }
+.wrapper { max-width: 880px; margin: 0 auto; padding: 24px 24px 80px; }
+.back { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--ink4); letter-spacing: 0.04em; text-transform: uppercase; padding: 12px 0; transition: color 0.2s; }
+.back:hover { color: var(--ink); }
+
+.hero { margin: 24px 0 48px; }
+.hero h1 { font-family: var(--serif); font-size: clamp(36px, 6vw, 60px); color: var(--ink); letter-spacing: -0.03em; line-height: 1.05; margin-bottom: 12px; }
+.hero h1 em { font-style: italic; }
+.hero p { font-size: 16px; color: var(--ink3); max-width: 540px; line-height: 1.7; }
+.section-label { font-size: 11px; font-weight: 700; color: var(--ink4); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+.project-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; margin-bottom: 56px; }
+.pcard { display: block; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; transition: box-shadow 0.3s, transform 0.3s, border-color 0.2s; }
+.pcard:hover { border-color: #ccc; box-shadow: 0 8px 30px rgba(0,0,0,0.06); transform: translateY(-3px); }
+.pcard-img { width: 100%; height: 180px; object-fit: cover; object-position: top; }
+.pcard-body { padding: 16px 18px; }
+.pcard-title { font-weight: 700; font-size: 15px; color: var(--ink); margin-bottom: 3px; }
+.pcard-sub { font-size: 12px; color: var(--ink4); margin-bottom: 10px; }
+.pcard-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+.pcard-tag { font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 12px; background: var(--accent-light); color: var(--accent); text-transform: uppercase; letter-spacing: 0.02em; }
+.tat-intro { font-size: 14px; color: var(--ink3); margin: -4px 0 20px; line-height: 1.7; max-width: 640px; }
+.tat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; margin-bottom: 56px; }
+.tcard { display: block; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; transition: box-shadow 0.2s, border-color 0.2s; }
+.tcard:hover { border-color: #ccc; box-shadow: 0 4px 16px rgba(0,0,0,0.05); }
+.tcard-img { width: 100%; height: 120px; object-fit: cover; object-position: top; }
+.tcard-body { padding: 12px 14px; }
+.tcard-title { font-weight: 600; font-size: 13px; color: var(--ink); margin-bottom: 2px; }
+.tcard-sub { font-size: 11px; color: var(--ink4); }
+.pg-footer { text-align: center; padding: 24px 0; border-top: 1px solid var(--border); font-size: 12px; color: var(--ink4); margin-top: 24px; }
+.pg-footer a { color: var(--ink3); }
+</style>
+</head>
+<body>
+<div class="wrapper">
+  <a href="/temporary-portfolio/" class="back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M19 12H5M12 19l-7-7 7-7"/></svg> Back to Portfolio</a>
+
+  <div class="hero">
+    <h1>Selected<br><em>Work</em></h1>
+    <p>Figma-to-Elementor builds for clients across the US, UK, and India. Every project custom-built — zero templates, zero bloat.</p>
+  </div>
+
+  <div class="section-label">Freelance — Figma to Elementor</div>
+  <div class="project-grid">
+    <a href="parikh-enterprises/" class="pcard">
+      <img src="images/parikhenterprisesltd-home.webp" alt="Parikh Enterprises Ltd" class="pcard-img" loading="lazy">
+      <div class="pcard-body">
+        <div class="pcard-title">Parikh Enterprises Ltd</div>
+        <div class="pcard-sub">Chemical Manufacturing & Export · India</div>
+        <div class="pcard-tags"><span class="pcard-tag">Elementor Pro</span><span class="pcard-tag">Custom CSS</span><span class="pcard-tag">Forminator</span></div>
+      </div>
+    </a>
+    <a href="london-pco-hire/" class="pcard">
+      <img src="images/londonpcohire-wolverhampton-2.webp" alt="London PCO Hire" class="pcard-img" loading="lazy">
+      <div class="pcard-body">
+        <div class="pcard-title">London PCO Hire</div>
+        <div class="pcard-sub">Vehicle Hire & Transport · United Kingdom</div>
+        <div class="pcard-tags"><span class="pcard-tag">Elementor Pro</span><span class="pcard-tag">Custom CSS</span></div>
+      </div>
+    </a>
+    <a href="ninja-stitch/" class="pcard">
+      <img src="images/ninjastitch.webp" alt="Ninja Stitch" class="pcard-img" loading="lazy">
+      <div class="pcard-body">
+        <div class="pcard-title">Ninja Stitch</div>
+        <div class="pcard-sub">Custom Apparel & Screen Printing · United States</div>
+        <div class="pcard-tags"><span class="pcard-tag">Elementor Pro</span><span class="pcard-tag">Custom CSS</span></div>
+      </div>
+    </a>
+    <a href="la-business-connect/" class="pcard">
+      <img src="images/labusinessconnect.webp" alt="LA Business Connect" class="pcard-img" loading="lazy">
+      <div class="pcard-body">
+        <div class="pcard-title">LA Business Connect</div>
+        <div class="pcard-sub">Government Business Services · Los Angeles, US</div>
+        <div class="pcard-tags"><span class="pcard-tag">Elementor Pro</span><span class="pcard-tag">Custom CSS</span></div>
+      </div>
+    </a>
+    <a href="brainworks/" class="pcard">
+      <img src="images/brainworks-home.webp" alt="Brainworks" class="pcard-img" loading="lazy">
+      <div class="pcard-body">
+        <div class="pcard-title">Brainworks</div>
+        <div class="pcard-sub">Management Consulting · India</div>
+        <div class="pcard-tags"><span class="pcard-tag">Elementor Pro</span><span class="pcard-tag">ACF Pro</span><span class="pcard-tag">Custom CSS</span></div>
+      </div>
+    </a>
+    <a href="elevation-trucking/" class="pcard">
+      <img src="images/elevationtrucking-home.webp" alt="Elevation Trucking" class="pcard-img" loading="lazy">
+      <div class="pcard-body">
+        <div class="pcard-title">Elevation Trucking</div>
+        <div class="pcard-sub">Freight & Logistics · United States</div>
+        <div class="pcard-tags"><span class="pcard-tag">Elementor Pro</span><span class="pcard-tag">Custom CSS</span></div>
+      </div>
+    </a>
+    <a href="safetynet-inc/" class="pcard">
+      <img src="images/safetynetinc.webp" alt="SafetyNet Inc" class="pcard-img" loading="lazy">
+      <div class="pcard-body">
+        <div class="pcard-title">SafetyNet Inc</div>
+        <div class="pcard-sub">Industrial Safety · United States</div>
+        <div class="pcard-tags"><span class="pcard-tag">Elementor Pro</span><span class="pcard-tag">Custom CSS</span></div>
+      </div>
+    </a>
+  </div>
+
+  <div class="section-label">Tryangle Tech — Agency Work</div>
+  <p class="tat-intro">Client sites built and maintained during full-time role at Tryangle Tech, Ahmedabad. Theme customization, WooCommerce, ACF integration, and a server-wide malware recovery across 180+ pages.</p>
+  <div class="tat-grid">
+    <a href="https://shivanshinfra.in" target="_blank" class="tcard">
+      <img src="images/screencapture-shivanshinfra-in-2026-04-09-00_57_26.webp" alt="Shivansh Infra" class="tcard-img" loading="lazy">
+      <div class="tcard-body">
+        <div class="tcard-title">Shivansh Infra</div>
+        <div class="tcard-sub">Civil Construction · ACF</div>
+      </div>
+    </a>
+    <a href="https://sndtiss.co.in" target="_blank" class="tcard">
+      <img src="images/screencapture-sndtiss-co-in-2026-04-09-00_55_59.webp" alt="SNDT ISS" class="tcard-img" loading="lazy">
+      <div class="tcard-body">
+        <div class="tcard-title">SNDT ISS</div>
+        <div class="tcard-sub">Inspection & Testing</div>
+      </div>
+    </a>
+    <a href="https://vasudhabeverages.com" target="_blank" class="tcard">
+      <img src="images/screencapture-vasudhabeverages-2026-04-09-00_54_49.webp" alt="Vasudha Beverages" class="tcard-img" loading="lazy">
+      <div class="tcard-body">
+        <div class="tcard-title">Vasudha Beverages</div>
+        <div class="tcard-sub">Beverages</div>
+      </div>
+    </a>
+    <a href="https://ppengitech.com" target="_blank" class="tcard">
+      <img src="images/ppengitech.com_.webp" alt="PP Engitech" class="tcard-img" loading="lazy">
+      <div class="tcard-body">
+        <div class="tcard-title">PP Engitech</div>
+        <div class="tcard-sub">Parking Systems</div>
+      </div>
+    </a>
+    <a href="https://thettl.co.in" target="_blank" class="tcard">
+      <img src="images/screencapture-thettl-co-in-about-us-2026-04-09-00_50_08.webp" alt="The TTL" class="tcard-img" loading="lazy">
+      <div class="tcard-body">
+        <div class="tcard-title">The TTL</div>
+        <div class="tcard-sub">Industrial Products · WooCommerce</div>
+      </div>
+    </a>
+    <a href="https://timbertoys.in" target="_blank" class="tcard">
+      <img src="images/screencapture-timbertoys-in-2026-04-09-00_45_43.webp" alt="Timber Toys" class="tcard-img" loading="lazy">
+      <div class="tcard-body">
+        <div class="tcard-title">Timber Toys</div>
+        <div class="tcard-sub">Children's Toys · WooCommerce</div>
+      </div>
+    </a>
+    <a href="https://witechnology.africa" target="_blank" class="tcard">
+      <img src="images/witechnology.africa_.webp" alt="WI Technology" class="tcard-img" loading="lazy">
+      <div class="tcard-body">
+        <div class="tcard-title">WI Technology</div>
+        <div class="tcard-sub">IT Services · Membership + PHP</div>
+      </div>
+    </a>
+  </div>
+
+  <div class="pg-footer">© 2026 Hetul Darji · <a href="/temporary-portfolio/">Portfolio</a> · <a href="mailto:hi@hetuldarji.in">hi@hetuldarji.in</a></div>
+</div>
+</body>
+</html>
