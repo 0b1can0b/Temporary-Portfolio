@@ -36,6 +36,15 @@ img { display: block; max-width: 100%; }
 .pcard { display: block; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; transition: box-shadow 0.3s, transform 0.3s, border-color 0.2s; }
 .pcard:hover { border-color: #ccc; box-shadow: 0 8px 30px rgba(0,0,0,0.06); transform: translateY(-3px); }
 .pcard-img { width: 100%; height: 180px; object-fit: cover; object-position: top; }
+.pcard-img.skeleton { 
+  background: linear-gradient(90deg, #E2E0DA 25%, #F5F3EF 50%, #E2E0DA 75%);
+  background-size: 200% 100%;
+  animation: skeleton-load 1.5s infinite;
+}
+@keyframes skeleton-load {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
 .pcard-body { padding: 16px 18px; }
 .pcard-title { font-weight: 700; font-size: 15px; color: var(--ink); margin-bottom: 3px; }
 .pcard-sub { font-size: 12px; color: var(--ink4); margin-bottom: 10px; }
@@ -51,6 +60,37 @@ img { display: block; max-width: 100%; }
 .tcard-sub { font-size: 11px; color: var(--ink4); }
 .pg-footer { text-align: center; padding: 24px 0; border-top: 1px solid var(--border); font-size: 12px; color: var(--ink4); margin-top: 24px; }
 .pg-footer a { color: var(--ink3); }
+
+@media (max-width: 639px) {
+  .wrapper { padding: 16px 16px 48px; }
+  
+  .back { font-size: 12px; padding: 10px 0; }
+  
+  .hero { margin: 20px 0 32px; }
+  .hero h1 { font-size: clamp(28px, 5vw, 42px); margin-bottom: 10px; }
+  .hero p { font-size: 15px; }
+  
+  .section-label { font-size: 10px; margin-bottom: 16px; padding-bottom: 10px; }
+  
+  .project-grid { grid-template-columns: 1fr; gap: 12px; margin-bottom: 40px; }
+  
+  .pcard-img { height: 160px; }
+  .pcard-body { padding: 14px 16px; }
+  .pcard-title { font-size: 14px; }
+  .pcard-sub { font-size: 11px; }
+  .pcard-tag { font-size: 9px; padding: 2px 8px; }
+  
+  .tat-intro { font-size: 13px; margin: -2px 0 16px; }
+  
+  .tat-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; margin-bottom: 40px; }
+  
+  .tcard-img { height: 100px; }
+  .tcard-body { padding: 10px 12px; }
+  .tcard-title { font-size: 12px; }
+  .tcard-sub { font-size: 10px; }
+  
+  .pg-footer { padding: 16px 0; margin-top: 16px; font-size: 11px; }
+}
 </style>
 </head>
 <body>
@@ -65,7 +105,7 @@ img { display: block; max-width: 100%; }
   <div class="section-label">Freelance — Figma to Elementor</div>
   <div class="project-grid">
     <a href="parikh-enterprises/" class="pcard">
-      <img src="images/parikhenterprisesltd-home.webp" alt="Parikh Enterprises Ltd" class="pcard-img" loading="lazy">
+      <img src="images/parikhenterprisesltd-home.webp" alt="Parikh Enterprises Ltd" class="pcard-img skeleton" loading="lazy">
       <div class="pcard-body">
         <div class="pcard-title">Parikh Enterprises Ltd</div>
         <div class="pcard-sub">Chemical Manufacturing & Export · India</div>
@@ -73,7 +113,7 @@ img { display: block; max-width: 100%; }
       </div>
     </a>
     <a href="london-pco-hire/" class="pcard">
-      <img src="images/londonpcohire-wolverhampton-2.webp" alt="London PCO Hire" class="pcard-img" loading="lazy">
+      <img src="images/londonpcohire-wolverhampton-2.webp" alt="London PCO Hire" class="pcard-img skeleton" loading="lazy">
       <div class="pcard-body">
         <div class="pcard-title">London PCO Hire</div>
         <div class="pcard-sub">Vehicle Hire & Transport · United Kingdom</div>
@@ -81,7 +121,7 @@ img { display: block; max-width: 100%; }
       </div>
     </a>
     <a href="ninja-stitch/" class="pcard">
-      <img src="images/ninjastitch.webp" alt="Ninja Stitch" class="pcard-img" loading="lazy">
+      <img src="images/ninjastitch.webp" alt="Ninja Stitch" class="pcard-img skeleton" loading="lazy">
       <div class="pcard-body">
         <div class="pcard-title">Ninja Stitch</div>
         <div class="pcard-sub">Custom Apparel & Screen Printing · United States</div>
@@ -89,7 +129,7 @@ img { display: block; max-width: 100%; }
       </div>
     </a>
     <a href="la-business-connect/" class="pcard">
-      <img src="images/labusinessconnect.webp" alt="LA Business Connect" class="pcard-img" loading="lazy">
+      <img src="images/labusinessconnect.webp" alt="LA Business Connect" class="pcard-img skeleton" loading="lazy">
       <div class="pcard-body">
         <div class="pcard-title">LA Business Connect</div>
         <div class="pcard-sub">Government Business Services · Los Angeles, US</div>
@@ -97,7 +137,7 @@ img { display: block; max-width: 100%; }
       </div>
     </a>
     <a href="brainworks/" class="pcard">
-      <img src="images/brainworks-home.webp" alt="Brainworks" class="pcard-img" loading="lazy">
+      <img src="images/brainworks-home.webp" alt="Brainworks" class="pcard-img skeleton" loading="lazy">
       <div class="pcard-body">
         <div class="pcard-title">Brainworks</div>
         <div class="pcard-sub">Management Consulting · India</div>
@@ -105,7 +145,7 @@ img { display: block; max-width: 100%; }
       </div>
     </a>
     <a href="elevation-trucking/" class="pcard">
-      <img src="images/elevationtrucking-home.webp" alt="Elevation Trucking" class="pcard-img" loading="lazy">
+      <img src="images/elevationtrucking-home.webp" alt="Elevation Trucking" class="pcard-img skeleton" loading="lazy">
       <div class="pcard-body">
         <div class="pcard-title">Elevation Trucking</div>
         <div class="pcard-sub">Freight & Logistics · United States</div>
@@ -113,7 +153,7 @@ img { display: block; max-width: 100%; }
       </div>
     </a>
     <a href="safetynet-inc/" class="pcard">
-      <img src="images/safetynetinc.webp" alt="SafetyNet Inc" class="pcard-img" loading="lazy">
+      <img src="images/safetynetinc.webp" alt="SafetyNet Inc" class="pcard-img skeleton" loading="lazy">
       <div class="pcard-body">
         <div class="pcard-title">SafetyNet Inc</div>
         <div class="pcard-sub">Industrial Safety · United States</div>
@@ -126,49 +166,49 @@ img { display: block; max-width: 100%; }
   <p class="tat-intro">Client sites built and maintained during full-time role at Tryangle Tech, Ahmedabad. Theme customization, WooCommerce, ACF integration, and a server-wide malware recovery across 180+ pages.</p>
   <div class="tat-grid">
     <a href="https://shivanshinfra.in" target="_blank" class="tcard">
-      <img src="images/screencapture-shivanshinfra-in-2026-04-09-00_57_26.webp" alt="Shivansh Infra" class="tcard-img" loading="lazy">
+      <img src="images/screencapture-shivanshinfra-in-2026-04-09-00_57_26.webp" alt="Shivansh Infra" class="tcard-img skeleton" loading="lazy">
       <div class="tcard-body">
         <div class="tcard-title">Shivansh Infra</div>
         <div class="tcard-sub">Civil Construction · ACF</div>
       </div>
     </a>
     <a href="https://sndtiss.co.in" target="_blank" class="tcard">
-      <img src="images/screencapture-sndtiss-co-in-2026-04-09-00_55_59.webp" alt="SNDT ISS" class="tcard-img" loading="lazy">
+      <img src="images/screencapture-sndtiss-co-in-2026-04-09-00_55_59.webp" alt="SNDT ISS" class="tcard-img skeleton" loading="lazy">
       <div class="tcard-body">
         <div class="tcard-title">SNDT ISS</div>
         <div class="tcard-sub">Inspection & Testing</div>
       </div>
     </a>
     <a href="https://vasudhabeverages.com" target="_blank" class="tcard">
-      <img src="images/screencapture-vasudhabeverages-2026-04-09-00_54_49.webp" alt="Vasudha Beverages" class="tcard-img" loading="lazy">
+      <img src="images/screencapture-vasudhabeverages-2026-04-09-00_54_49.webp" alt="Vasudha Beverages" class="tcard-img skeleton" loading="lazy">
       <div class="tcard-body">
         <div class="tcard-title">Vasudha Beverages</div>
         <div class="tcard-sub">Beverages</div>
       </div>
     </a>
     <a href="https://ppengitech.com" target="_blank" class="tcard">
-      <img src="images/ppengitech.com_.webp" alt="PP Engitech" class="tcard-img" loading="lazy">
+      <img src="images/ppengitech.com_.webp" alt="PP Engitech" class="tcard-img skeleton" loading="lazy">
       <div class="tcard-body">
         <div class="tcard-title">PP Engitech</div>
         <div class="tcard-sub">Parking Systems</div>
       </div>
     </a>
     <a href="https://thettl.co.in" target="_blank" class="tcard">
-      <img src="images/screencapture-thettl-co-in-about-us-2026-04-09-00_50_08.webp" alt="The TTL" class="tcard-img" loading="lazy">
+      <img src="images/screencapture-thettl-co-in-about-us-2026-04-09-00_50_08.webp" alt="The TTL" class="tcard-img skeleton" loading="lazy">
       <div class="tcard-body">
         <div class="tcard-title">The TTL</div>
         <div class="tcard-sub">Industrial Products · WooCommerce</div>
       </div>
     </a>
     <a href="https://timbertoys.in" target="_blank" class="tcard">
-      <img src="images/screencapture-timbertoys-in-2026-04-09-00_45_43.webp" alt="Timber Toys" class="tcard-img" loading="lazy">
+      <img src="images/screencapture-timbertoys-in-2026-04-09-00_45_43.webp" alt="Timber Toys" class="tcard-img skeleton" loading="lazy">
       <div class="tcard-body">
         <div class="tcard-title">Timber Toys</div>
         <div class="tcard-sub">Children's Toys · WooCommerce</div>
       </div>
     </a>
     <a href="https://witechnology.africa" target="_blank" class="tcard">
-      <img src="images/witechnology.africa_.webp" alt="WI Technology" class="tcard-img" loading="lazy">
+      <img src="images/witechnology.africa_.webp" alt="WI Technology" class="tcard-img skeleton" loading="lazy">
       <div class="tcard-body">
         <div class="tcard-title">WI Technology</div>
         <div class="tcard-sub">IT Services · Membership + PHP</div>
@@ -178,5 +218,18 @@ img { display: block; max-width: 100%; }
 
   <div class="pg-footer">© 2026 Hetul Darji · <a href="/temporary-portfolio/">Portfolio</a> · <a href="mailto:hi@hetuldarji.in">hi@hetuldarji.in</a></div>
 </div>
+
+<script>
+// Remove skeleton loader when image finishes loading
+document.querySelectorAll('.skeleton').forEach(img => {
+  img.addEventListener('load', function() {
+    this.classList.remove('skeleton');
+  });
+  // If already cached/loaded
+  if (img.complete) {
+    img.classList.remove('skeleton');
+  }
+});
+</script>
 </body>
 </html>
