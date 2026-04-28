@@ -1,4 +1,11 @@
 {
+  "redirects": [
+    {
+      "source": "/hetuldarji.in",
+      "destination": "/",
+      "permanent": true
+    }
+  ],
   "headers": [
     {
       "source": "/index.html",
